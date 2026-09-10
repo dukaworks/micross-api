@@ -1,8 +1,0 @@
-# .docs/run/ 是临时工作目录：只保留可复用的脚本，产物与日志不入库
-*.exe
-*.log
-*.out
-*.err
-*.bin
-stdout.txt
-stderr.txt
