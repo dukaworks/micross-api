@@ -311,6 +311,9 @@ func migrateDB() error {
 			return err
 		}
 	}
+	if err := migrateDiscountTables(DB); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -391,6 +394,9 @@ func migrateDBFast() error {
 		if err := DB.AutoMigrate(&SubscriptionPlan{}); err != nil {
 			return err
 		}
+	}
+	if err := migrateDiscountTables(DB); err != nil {
+		return err
 	}
 	common.SysLog("database migrated")
 	return nil
@@ -574,6 +580,20 @@ PRIMARY KEY (` + "`id`" + `)
 		}
 	}
 	return nil
+}
+
+// migrateDiscountTables 迁移折扣三表（discount_plans / discount_rules / discount_bindings）。
+// SQLite 下 decimal(10,6) 列的精度与标度在 AutoMigrate 的列比对中判不出相等，会让每次启动
+// 都重建整张表（CREATE __temp → DROP → RENAME），故建表之后不再重复迁移。
+// 后续给这三张表新增列时，需在此补 ALTER TABLE ADD COLUMN（与 subscription 表同法）。
+func migrateDiscountTables(db *gorm.DB) error {
+	if db.Dialector.Name() == "sqlite" &&
+		db.Migrator().HasTable(&DiscountPlan{}) &&
+		db.Migrator().HasTable(&DiscountRule{}) &&
+		db.Migrator().HasTable(&DiscountBinding{}) {
+		return nil
+	}
+	return db.AutoMigrate(&DiscountPlan{}, &DiscountRule{}, &DiscountBinding{})
 }
 
 // migrateTokenModelLimitsToText migrates model_limits column from varchar(1024) to text

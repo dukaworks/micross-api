@@ -183,6 +183,27 @@ func SetApiRouter(router *gin.Engine) {
 			subscriptionAdminRoute.DELETE("/user_subscriptions/:id", controller.AdminDeleteUserSubscription)
 		}
 
+		// Discount plans (admin only). G0 影子阶段：只做配置读写，不参与计费。
+		discountAdminRoute := apiRouter.Group("/discount/admin")
+		discountAdminRoute.Use(middleware.AdminAuth())
+		{
+			discountAdminRoute.GET("/plans", controller.GetDiscountPlans)
+			discountAdminRoute.POST("/plans", controller.CreateDiscountPlan)
+			discountAdminRoute.GET("/plans/:id", controller.GetDiscountPlan)
+			discountAdminRoute.PUT("/plans/:id", controller.UpdateDiscountPlan)
+			discountAdminRoute.PATCH("/plans/:id/status", controller.UpdateDiscountPlanStatus)
+			discountAdminRoute.DELETE("/plans/:id", controller.DeleteDiscountPlan)
+
+			discountAdminRoute.GET("/plans/:id/rules", controller.GetDiscountRules)
+			discountAdminRoute.POST("/plans/:id/rules", controller.CreateDiscountRule)
+			discountAdminRoute.PUT("/rules/:id", controller.UpdateDiscountRule)
+			discountAdminRoute.DELETE("/rules/:id", controller.DeleteDiscountRule)
+
+			discountAdminRoute.GET("/bindings", controller.GetDiscountBindings)
+			discountAdminRoute.POST("/bindings", controller.CreateDiscountBinding)
+			discountAdminRoute.DELETE("/bindings/:id", controller.DeleteDiscountBinding)
+		}
+
 		// Subscription payment callbacks (no auth)
 		apiRouter.POST("/subscription/epay/notify", anonymousRequestBodyLimit, controller.SubscriptionEpayNotify)
 		apiRouter.GET("/subscription/epay/notify", controller.SubscriptionEpayNotify)
