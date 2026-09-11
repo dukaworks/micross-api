@@ -24,6 +24,7 @@ import { toast } from 'sonner'
 
 import { CopyButton } from '@/components/copy-button'
 import { Dialog } from '@/components/dialog'
+import { ErrorState } from '@/components/error-state'
 import { LoadingState } from '@/components/loading-state'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -181,11 +182,7 @@ export function TwoFASetupDialog({
         {initializing ? (
           <LoadingState message={t('Setting up 2FA...')} size='sm' />
         ) : !setupData ? (
-          <div className='flex justify-center py-8'>
-            <div className='text-muted-foreground'>
-              {t('Failed to load setup data')}
-            </div>
-          </div>
+          <ErrorState title={t('Failed to load setup data')} size='sm' />
         ) : (
           <>
             {/* Step 0: QR Code */}

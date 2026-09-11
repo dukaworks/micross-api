@@ -41,6 +41,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { ErrorState } from '@/components/error-state'
 import { LoadingState } from '@/components/loading-state'
 import { Button } from '@/components/ui/button'
 import {
@@ -188,9 +189,13 @@ export function ViewDetailsDialog({
 
         {isDetailsLoading ? <LoadingState size='sm' /> : null}
         {showDetailsError ? (
-          <div className='text-muted-foreground py-10 text-center text-sm'>
-            {detailsRes?.message || t('Failed to fetch deployment details')}
-          </div>
+          <ErrorState
+            title={
+              detailsRes?.message || t('Failed to fetch deployment details')
+            }
+            onRetry={handleRefresh}
+            size='sm'
+          />
         ) : null}
         {showDetailsContent ? (
           <>

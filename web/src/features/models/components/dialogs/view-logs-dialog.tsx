@@ -176,23 +176,25 @@ export function ViewLogsDialog({
     logsContent = <LoadingState size='sm' />
   } else if (containers.length === 0) {
     logsContent = (
-      <div className='py-8 text-center text-gray-400'>{t('No containers')}</div>
+      <div className='text-muted-foreground py-8 text-center'>
+        {t('No containers')}
+      </div>
     )
   } else if (!containerId) {
     logsContent = (
-      <div className='py-8 text-center text-gray-400'>
+      <div className='text-muted-foreground py-8 text-center'>
         {t('Please select a container')}
       </div>
     )
   } else if (!logsText.trim()) {
     logsContent = (
-      <div className='py-8 text-center text-gray-400'>{t('No logs')}</div>
+      <div className='text-muted-foreground py-8 text-center'>{t('No logs')}</div>
     )
   } else {
     logsContent = (
       <div className='font-mono text-sm'>
         {keyedLogLines.map(({ key, line }) => (
-          <div key={key} className='whitespace-pre-wrap text-gray-200'>
+          <div key={key} className='whitespace-pre-wrap text-foreground'>
             {line}
           </div>
         ))}
