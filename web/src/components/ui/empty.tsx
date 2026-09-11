@@ -20,12 +20,14 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
+// 基元默认不画边框。只写 border-dashed 而不写 border 时边框宽度是 0，什么也看不到；
+// 需要带虚线框的空态，请在调用方显式传 'border border-dashed'。
 function Empty({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='empty'
       className={cn(
-        'flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance',
+        'flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl p-6 text-center text-balance',
         className
       )}
       {...props}

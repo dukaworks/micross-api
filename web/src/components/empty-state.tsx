@@ -37,7 +37,6 @@ interface EmptyStateProps {
   description?: string
   action?: ReactNode
   className?: string
-  bordered?: boolean
 }
 
 export function EmptyState(props: EmptyStateProps) {
@@ -46,13 +45,7 @@ export function EmptyState(props: EmptyStateProps) {
 
   return (
     <FadeIn>
-      <Empty
-        className={cn(
-          'min-h-[300px]',
-          props.bordered && 'border',
-          props.className
-        )}
-      >
+      <Empty className={cn('min-h-[300px]', props.className)}>
         <EmptyHeader>
           <EmptyMedia variant='icon'>
             <Icon className='size-6' />

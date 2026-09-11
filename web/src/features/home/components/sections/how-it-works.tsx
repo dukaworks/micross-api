@@ -70,7 +70,7 @@ export function HowItWorks() {
               animation='fade-up'
               className='relative'
             >
-              <div className='group/step bg-card ring-foreground/10 relative overflow-hidden rounded-2xl shadow-card ring-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'>
+              <div className='group/step border-border bg-card relative overflow-hidden rounded-2xl border shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'>
                 <div className='relative h-52 overflow-hidden md:h-56'>
                   <img
                     src={step.image}
