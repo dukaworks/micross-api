@@ -19,25 +19,47 @@ For commercial licensing, please contact support@quantumnous.com
 import {
   Activity,
   Briefcase,
+  Crown,
   FileText,
   FlaskConical,
   Key,
   LayoutDashboard,
   ListTodo,
+  Receipt,
   Settings,
+  TrendingUp,
   User,
   Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { type SidebarData } from '@/components/layout/types'
+import type { NavItem, SidebarData } from '@/components/layout/types'
 import { ROLE } from '@/lib/roles'
+
+/**
+ * Whether the dealer identity is available yet.
+ *
+ * Dealers (`users.subject_type = 'agent'`) arrive with P3 — until then no
+ * field and no endpoint can answer "is the signed-in user a dealer", so the
+ * dealer-only 「账单」 entry is defined below but switched off. It has to be
+ * hidden from *every* role, administrators included: turning it on earlier
+ * would put a page with nothing behind it in front of the wrong audience.
+ *
+ * P3 replaces this constant with the real identity check. The navigation
+ * entry, the `/billing` route, its sidebar-module switch and its
+ * `URL_TO_CONFIG_MAP` registration are already in place.
+ */
+const DEALER_IDENTITY_ENABLED = false
 
 /**
  * Root navigation groups for the application sidebar.
  *
  * Audience layering:
- *   · General / Personal — every signed-in user;
+ *   · General — every signed-in user: the console entry points;
+ *   · Personal — the signed-in user's own money and account, split by the
+ *     direction money moves: wallet (balance / top-up / redemption),
+ *     plans (what you buy), earnings (referral commission, plus the dealer
+ *     margin from P3), profile;
  *   · Business Management — administrators (`requiredRole: ROLE.ADMIN`);
  *   · System Management — super administrators only.
  *
@@ -47,6 +69,16 @@ import { ROLE } from '@/lib/roles'
  */
 export function useSidebarData(): SidebarData {
   const { t } = useTranslation()
+
+  const dealerBillingItems: NavItem[] = DEALER_IDENTITY_ENABLED
+    ? [
+        {
+          title: t('Dealer Billing'),
+          url: '/billing',
+          icon: Receipt,
+        },
+      ]
+    : []
 
   return {
     navGroups: [
@@ -97,6 +129,17 @@ export function useSidebarData(): SidebarData {
             url: '/wallet',
             icon: Wallet,
           },
+          {
+            title: t('Plan'),
+            url: '/plans',
+            icon: Crown,
+          },
+          {
+            title: t('Earnings'),
+            url: '/earnings',
+            icon: TrendingUp,
+          },
+          ...dealerBillingItems,
           {
             title: t('Profile'),
             url: '/profile',

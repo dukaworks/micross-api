@@ -23,6 +23,7 @@ import {
   serializeHeaderNavModules,
   serializeSidebarModulesAdmin,
 } from './sections/config'
+import { DocsLinkSection } from './sections/docs-link-section'
 import { HeaderNavigationSection } from './sections/header-navigation-section'
 import { NoticeSection } from './sections/notice-section'
 import { SidebarModulesSection } from './sections/sidebar-modules-section'
@@ -70,6 +71,15 @@ const SITE_SECTIONS = [
         />
       )
     },
+  },
+  {
+    id: 'docs-link',
+    titleKey: 'Documentation Link',
+    build: (settings: SiteSettings) => (
+      <DocsLinkSection
+        defaultValue={settings['general_setting.docs_link'] ?? ''}
+      />
+    ),
   },
   {
     id: 'sidebar-modules',

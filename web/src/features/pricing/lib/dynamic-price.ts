@@ -18,8 +18,8 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { formatBillingCurrencyFromUSD } from '@/lib/currency'
 
-import { TOKEN_UNIT_DIVISORS } from '../constants'
-import type { PricingModel, TokenUnit } from '../types'
+import { DEFAULT_TOKEN_UNIT, TOKEN_UNIT_DIVISORS } from '../constants'
+import type { PricingModel } from '../types'
 import {
   BILLING_PRICING_VARS,
   parseTiersFromExpr,
@@ -28,15 +28,6 @@ import {
   type BillingVar,
   type ParsedTier,
 } from './billing-expr'
-import { getDisplayGroupRatio } from './model-helpers'
-
-type DynamicPriceOptions = {
-  tokenUnit: TokenUnit
-  showRechargePrice?: boolean
-  priceRate?: number
-  usdExchangeRate?: number
-  groupRatioMultiplier?: number
-}
 
 export type DynamicPriceEntry = {
   key: string
@@ -66,41 +57,19 @@ export function isDynamicPricingModel(model: PricingModel): boolean {
   return model.billing_mode === 'tiered_expr' && Boolean(model.billing_expr)
 }
 
-export function getDynamicDisplayGroupRatio(
-  model: PricingModel,
-  selectedGroup?: string
-): number {
-  return getDisplayGroupRatio(model, selectedGroup)
-}
-
-function applyRechargeRate(
-  price: number,
-  showWithRecharge: boolean,
-  priceRate: number,
-  usdExchangeRate: number
-): number {
-  if (!showWithRecharge) return price
-  return (price * priceRate) / usdExchangeRate
-}
-
+/**
+ * Format a per-1M-token dynamic price for display.
+ *
+ * The model square is a public price list, so it always shows the official
+ * catalog price per 1M tokens.
+ */
 export function formatDynamicUnitPrice(
-  valuePerMillionTokens: number,
-  options: DynamicPriceOptions
+  valuePerMillionTokens: number
 ): string {
-  const groupRatio = options.groupRatioMultiplier ?? 1
-  const priceRate = options.priceRate ?? 1
-  const usdExchangeRate = options.usdExchangeRate ?? 1
   const priceUSD =
-    (valuePerMillionTokens * groupRatio) /
-    TOKEN_UNIT_DIVISORS[options.tokenUnit]
-  const displayPrice = applyRechargeRate(
-    priceUSD,
-    options.showRechargePrice ?? false,
-    priceRate,
-    usdExchangeRate
-  )
+    valuePerMillionTokens / TOKEN_UNIT_DIVISORS[DEFAULT_TOKEN_UNIT]
 
-  return formatBillingCurrencyFromUSD(displayPrice, {
+  return formatBillingCurrencyFromUSD(priceUSD, {
     digitsLarge: 4,
     digitsSmall: 6,
     abbreviate: false,
@@ -124,8 +93,7 @@ export function hasDynamicRequestRules(model: PricingModel): boolean {
 }
 
 export function getDynamicPriceEntries(
-  tier: ParsedTier | null,
-  options: DynamicPriceOptions
+  tier: ParsedTier | null
 ): DynamicPriceEntry[] {
   if (!tier) return []
 
@@ -141,7 +109,7 @@ export function getDynamicPriceEntries(
         label: variable.label,
         shortLabel: variable.shortLabel,
         value,
-        formatted: formatDynamicUnitPrice(value, options),
+        formatted: formatDynamicUnitPrice(value),
         variable,
       },
     ]
@@ -154,14 +122,13 @@ export function getDynamicPriceEntries(
 }
 
 export function getDynamicPricingSummary(
-  model: PricingModel,
-  options: DynamicPriceOptions
+  model: PricingModel
 ): DynamicPricingSummary | null {
   if (!isDynamicPricingModel(model)) return null
 
   const tiers = getDynamicPricingTiers(model)
   const tier = tiers[0] || null
-  const entries = getDynamicPriceEntries(tier, options)
+  const entries = getDynamicPriceEntries(tier)
   const rawExpression = model.billing_expr || ''
 
   return {

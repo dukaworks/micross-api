@@ -21,11 +21,6 @@ import { AlertTriangle, HeartPulse, Timer } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import {
-  StaticDataTable,
-  staticDataTableClassNames as tableStyles,
-} from '@/components/data-table'
-import { GroupBadge } from '@/components/group-badge'
 import { getPerfMetrics } from '@/features/performance-metrics/api'
 import {
   formatLatency,
@@ -39,7 +34,6 @@ import { cn } from '@/lib/utils'
 import { type UptimeDayPoint } from '../lib/mock-stats'
 import type { PricingModel } from '../types'
 import { LatencyTrendChart, UptimeTrendChart } from './model-details-charts'
-import { UptimeSparkline } from './model-details-uptime-sparkline'
 
 function StatCard(props: {
   icon: React.ComponentType<{ className?: string }>
@@ -73,7 +67,6 @@ function StatCard(props: {
 }
 
 type PerformanceRow = {
-  group: string
   avg_ttft_ms: number
   avg_latency_ms: number
   success_rate: number
@@ -138,18 +131,6 @@ function toUptimeSeries(groups: PerformanceGroup[]): UptimeDayPoint[] {
     })
 }
 
-function toGroupUptimeSeries(group: PerformanceGroup): UptimeDayPoint[] {
-  return group.series.map((point) => {
-    const successRate = toUptimePct(point.success_rate)
-    return {
-      date: new Date(point.ts * 1000).toISOString(),
-      uptime_pct: successRate,
-      incidents: successRate < 100 ? 1 : 0,
-      outage_minutes: 0,
-    }
-  })
-}
-
 function average(
   rows: PerformanceRow[],
   field: 'avg_ttft_ms' | 'avg_latency_ms'
@@ -175,7 +156,6 @@ export function ModelDetailsPerformance(props: { model: PricingModel }) {
   const performances = useMemo<PerformanceRow[]>(
     () =>
       groups.map((group) => ({
-        group: group.group,
         avg_ttft_ms: group.avg_ttft_ms,
         avg_latency_ms: group.avg_latency_ms,
         success_rate: group.success_rate,
@@ -185,13 +165,6 @@ export function ModelDetailsPerformance(props: { model: PricingModel }) {
   )
   const latencySeries = useMemo(() => toLatencySeries(groups), [groups])
   const uptimeSeries = useMemo(() => toUptimeSeries(groups), [groups])
-  const uptimeByGroup = useMemo<Record<string, UptimeDayPoint[]>>(() => {
-    const map: Record<string, UptimeDayPoint[]> = {}
-    for (const group of groups) {
-      map[group.group] = toGroupUptimeSeries(group)
-    }
-    return map
-  }, [groups])
 
   if (metricsQuery.isLoading || performances.length === 0) {
     return (
@@ -247,63 +220,6 @@ export function ModelDetailsPerformance(props: { model: PricingModel }) {
           valueClassName={getSuccessRateTextClass(successRate)}
         />
       </div>
-
-      <section>
-        <SectionHeader
-          icon={HeartPulse}
-          title={t('Per-group performance')}
-          description={t('Average latency, TTFT, TPS, and success rate')}
-        />
-        <StaticDataTable
-          className='rounded-lg'
-          tableClassName='text-sm'
-          headerRowClassName={tableStyles.compactHeaderRow}
-          data={performances}
-          getRowKey={(perf) => perf.group}
-          columns={[
-            {
-              id: 'group',
-              header: t('Group'),
-              className: tableStyles.compactHeaderCell,
-              cellClassName: tableStyles.compactCell,
-              cell: (perf) => <GroupBadge group={perf.group} size='sm' />,
-            },
-            {
-              id: 'tps',
-              header: 'TPS',
-              className: tableStyles.compactHeaderCellRight,
-              cellClassName: tableStyles.compactNumericCell,
-              cell: (perf) => formatThroughput(perf.avg_tps),
-            },
-            {
-              id: 'ttft',
-              header: t('Average TTFT'),
-              className: tableStyles.compactHeaderCellRight,
-              cellClassName: tableStyles.compactNumericCell,
-              cell: (perf) => formatLatency(perf.avg_ttft_ms),
-            },
-            {
-              id: 'latency',
-              header: t('Average latency'),
-              className: tableStyles.compactHeaderCellRight,
-              cellClassName: tableStyles.compactMutedNumericCell,
-              cell: (perf) => formatLatency(perf.avg_latency_ms),
-            },
-            {
-              id: 'success',
-              header: t('Success rate'),
-              className: cn(tableStyles.compactHeaderCell, 'min-w-[180px]'),
-              cellClassName: tableStyles.compactCell,
-              cell: (perf) => (
-                <UptimeSparkline
-                  size='sm'
-                  series={uptimeByGroup[perf.group] ?? []}
-                />
-              ),
-            },
-          ]}
-        />
-      </section>
 
       <section>
         <SectionHeader

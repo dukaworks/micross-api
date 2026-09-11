@@ -16,13 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import {
-  SORT_OPTIONS,
-  FILTER_ALL,
-  QUOTA_TYPES,
-  QUOTA_TYPE_VALUES,
-  ENDPOINT_TYPES,
-} from '../constants'
+import { SORT_OPTIONS, FILTER_ALL, ENDPOINT_TYPES } from '../constants'
 import type { PricingModel } from '../types'
 
 // ----------------------------------------------------------------------------
@@ -57,32 +51,6 @@ export function filterByVendor(
 ): PricingModel[] {
   if (vendor === FILTER_ALL) return models
   return models.filter((m) => m.vendor_name === vendor)
-}
-
-/**
- * Filter models by group
- */
-export function filterByGroup(
-  models: PricingModel[],
-  group: string
-): PricingModel[] {
-  if (group === FILTER_ALL) return models
-  return models.filter((m) => m.enable_groups?.includes(group))
-}
-
-/**
- * Filter models by quota type
- */
-export function filterByQuotaType(
-  models: PricingModel[],
-  quotaType: string
-): PricingModel[] {
-  if (quotaType === QUOTA_TYPES.ALL) return models
-  const targetType =
-    quotaType === QUOTA_TYPES.TOKEN
-      ? QUOTA_TYPE_VALUES.TOKEN
-      : QUOTA_TYPE_VALUES.REQUEST
-  return models.filter((m) => m.quota_type === targetType)
 }
 
 /**
@@ -139,8 +107,6 @@ export function filterAndSortModels(
   filters: {
     search: string
     vendor: string
-    group: string
-    quotaType: string
     endpointType: string
     tag: string
     sortBy: string
@@ -148,8 +114,6 @@ export function filterAndSortModels(
 ): PricingModel[] {
   let result = filterBySearch(models, filters.search)
   result = filterByVendor(result, filters.vendor)
-  result = filterByGroup(result, filters.group)
-  result = filterByQuotaType(result, filters.quotaType)
   result = filterByEndpointType(result, filters.endpointType)
   result = filterByTag(result, filters.tag)
   result = sortModels(result, filters.sortBy)

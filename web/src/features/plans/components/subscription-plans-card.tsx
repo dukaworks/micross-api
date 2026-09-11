@@ -56,10 +56,9 @@ import type {
   PlanRecord,
   UserSubscriptionRecord,
 } from '@/features/subscriptions/types'
+import type { PaymentMethod, TopupInfo } from '@/features/wallet/types'
 import { formatQuota } from '@/lib/format'
 import { cn } from '@/lib/utils'
-
-import type { PaymentMethod, TopupInfo } from '../types'
 
 interface SubscriptionPlansCardProps {
   topupInfo: TopupInfo | null

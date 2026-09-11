@@ -44,26 +44,6 @@ export function getSortLabels(t: TFunction): Record<SortOption, string> {
 /** Filter values */
 export const FILTER_ALL = 'all'
 
-/** Quota type options */
-export const QUOTA_TYPES = {
-  ALL: 'all',
-  TOKEN: 'token',
-  REQUEST: 'request',
-} as const
-
-export type QuotaTypeOption = (typeof QUOTA_TYPES)[keyof typeof QUOTA_TYPES]
-
-/** Quota type labels */
-export function getQuotaTypeLabels(
-  t: TFunction
-): Record<QuotaTypeOption, string> {
-  return {
-    [QUOTA_TYPES.ALL]: t('All Models'),
-    [QUOTA_TYPES.TOKEN]: t('Token-based'),
-    [QUOTA_TYPES.REQUEST]: t('Per Request'),
-  }
-}
-
 /** Endpoint type options */
 export const ENDPOINT_TYPES = {
   ALL: 'all',
@@ -97,15 +77,6 @@ export function getEndpointTypeLabels(
   }
 }
 
-/** Filter section keys */
-export const FILTER_SECTIONS = {
-  PRICING_TYPE: 'pricingType',
-  ENDPOINT_TYPE: 'endpointType',
-  VENDOR: 'vendor',
-  GROUP: 'group',
-  TAG: 'tag',
-} as const
-
 /** Maximum number of tags to display in model row */
 export const MAX_TAGS_DISPLAY = 5
 
@@ -114,9 +85,6 @@ export const MAX_FILTER_ITEMS = 5
 
 /** Sidebar width */
 export const SIDEBAR_WIDTH = 'w-64'
-
-/** Excluded groups */
-export const EXCLUDED_GROUPS = ['', 'auto']
 
 /** Quota type values */
 export const QUOTA_TYPE_VALUES = {

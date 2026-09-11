@@ -128,6 +128,18 @@ export function SidebarModulesSection({
         title: t('Wallet'),
         description: t('Top up balance and view billing history.'),
       },
+      plans: {
+        title: t('Plan'),
+        description: t('Subscribe to a plan for model access'),
+      },
+      earnings: {
+        title: t('Earnings'),
+        description: t('Referral Program'),
+      },
+      billing: {
+        title: t('Dealer Billing'),
+        description: t('Dealer Billing Placeholder Description'),
+      },
       personal: {
         title: t('Profile'),
         description: t('Personal settings and profile management.'),

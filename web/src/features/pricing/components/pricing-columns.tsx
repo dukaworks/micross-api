@@ -27,11 +27,7 @@ import {
 import { StatusBadge } from '@/components/status-badge'
 import { getLobeIcon } from '@/lib/lobe-icon'
 
-import { DEFAULT_TOKEN_UNIT } from '../constants'
-import {
-  getDynamicDisplayGroupRatio,
-  getDynamicPricingSummary,
-} from '../lib/dynamic-price'
+import { getDynamicPricingSummary } from '../lib/dynamic-price'
 import { parseTags } from '../lib/filters'
 import { isTokenBasedModel } from '../lib/model-helpers'
 import {
@@ -39,34 +35,18 @@ import {
   formatRequestPrice,
   stripTrailingZeros,
 } from '../lib/price'
-import type { PricingModel, TokenUnit } from '../types'
+import type { PricingModel } from '../types'
 import { ModelBillingModeBadge } from './model-billing-mode-badge'
 
 // ----------------------------------------------------------------------------
 // Pricing Table Columns
 // ----------------------------------------------------------------------------
 
-export interface PricingColumnsOptions {
-  tokenUnit?: TokenUnit
-  priceRate?: number
-  usdExchangeRate?: number
-  showRechargePrice?: boolean
-  selectedGroup?: string
-}
+/** All prices in the model square are official catalog prices per 1M tokens. */
+const TOKEN_UNIT_LABEL = '1M'
 
-export function usePricingColumns(
-  options: PricingColumnsOptions = {}
-): ColumnDef<PricingModel>[] {
+export function usePricingColumns(): ColumnDef<PricingModel>[] {
   const { t } = useTranslation()
-  const {
-    tokenUnit = DEFAULT_TOKEN_UNIT,
-    priceRate = 1,
-    usdExchangeRate = 1,
-    showRechargePrice = false,
-    selectedGroup,
-  } = options
-
-  const tokenUnitLabel = tokenUnit === 'K' ? '1K' : '1M'
 
   return [
     // Model column
@@ -113,16 +93,7 @@ export function usePricingColumns(
       ),
       cell: ({ row }) => {
         const model = row.original
-        const dynamicSummary = getDynamicPricingSummary(model, {
-          tokenUnit,
-          showRechargePrice,
-          priceRate,
-          usdExchangeRate,
-          groupRatioMultiplier: getDynamicDisplayGroupRatio(
-            model,
-            selectedGroup
-          ),
-        })
+        const dynamicSummary = getDynamicPricingSummary(model)
 
         if (dynamicSummary) {
           if (dynamicSummary.isSpecialExpression) {
@@ -163,7 +134,7 @@ export function usePricingColumns(
                 ))}
               </span>
               <div className='text-muted-foreground/50 text-[10px]'>
-                / {tokenUnitLabel} tokens
+                / {TOKEN_UNIT_LABEL} tokens
                 {dynamicSummary.tierCount > 1 &&
                   ` · ${t('{{count}} tiers', {
                     count: dynamicSummary.tierCount,
@@ -176,28 +147,8 @@ export function usePricingColumns(
         const isTokenBased = isTokenBasedModel(model)
 
         if (isTokenBased) {
-          const inputPrice = stripTrailingZeros(
-            formatPrice(
-              model,
-              'input',
-              tokenUnit,
-              showRechargePrice,
-              priceRate,
-              usdExchangeRate,
-              selectedGroup
-            )
-          )
-          const outputPrice = stripTrailingZeros(
-            formatPrice(
-              model,
-              'output',
-              tokenUnit,
-              showRechargePrice,
-              priceRate,
-              usdExchangeRate,
-              selectedGroup
-            )
-          )
+          const inputPrice = stripTrailingZeros(formatPrice(model, 'input'))
+          const outputPrice = stripTrailingZeros(formatPrice(model, 'output'))
 
           return (
             <div className='max-w-full min-w-0'>
@@ -207,21 +158,13 @@ export function usePricingColumns(
                 {outputPrice}
               </span>
               <div className='text-muted-foreground/50 text-[10px]'>
-                / {tokenUnitLabel} tokens
+                / {TOKEN_UNIT_LABEL} tokens
               </div>
             </div>
           )
         }
 
-        const price = stripTrailingZeros(
-          formatRequestPrice(
-            model,
-            showRechargePrice,
-            priceRate,
-            usdExchangeRate,
-            selectedGroup
-          )
-        )
+        const price = stripTrailingZeros(formatRequestPrice(model))
 
         return (
           <div className='max-w-full min-w-0'>
@@ -242,16 +185,7 @@ export function usePricingColumns(
       header: t('Cached'),
       cell: ({ row }) => {
         const model = row.original
-        const dynamicSummary = getDynamicPricingSummary(model, {
-          tokenUnit,
-          showRechargePrice,
-          priceRate,
-          usdExchangeRate,
-          groupRatioMultiplier: getDynamicDisplayGroupRatio(
-            model,
-            selectedGroup
-          ),
-        })
+        const dynamicSummary = getDynamicPricingSummary(model)
 
         if (dynamicSummary) {
           if (dynamicSummary.isSpecialExpression) {
@@ -275,7 +209,7 @@ export function usePricingColumns(
                 {stripTrailingZeros(cacheEntry.formatted)}
               </span>
               <div className='text-muted-foreground/50 text-[10px]'>
-                / {tokenUnitLabel}
+                / {TOKEN_UNIT_LABEL}
               </div>
             </div>
           )
@@ -287,17 +221,7 @@ export function usePricingColumns(
           return <span className='text-muted-foreground/30 text-xs'>—</span>
         }
 
-        const cachedPrice = stripTrailingZeros(
-          formatPrice(
-            model,
-            'cache',
-            tokenUnit,
-            showRechargePrice,
-            priceRate,
-            usdExchangeRate,
-            selectedGroup
-          )
-        )
+        const cachedPrice = stripTrailingZeros(formatPrice(model, 'cache'))
 
         return (
           <div className='max-w-full min-w-0'>
@@ -305,7 +229,7 @@ export function usePricingColumns(
               {cachedPrice}
             </span>
             <div className='text-muted-foreground/50 text-[10px]'>
-              / {tokenUnitLabel}
+              / {TOKEN_UNIT_LABEL}
             </div>
           </div>
         )

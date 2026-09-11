@@ -559,11 +559,6 @@ function GroupPricingGuide({ open, onOpenChange }: GroupPricingGuideProps) {
                 )}
               </li>
             </ol>
-            <p className='text-muted-foreground text-sm leading-6'>
-              {t(
-                'Common pitfall: the user group base ratio is NOT a personal discount. It only applies when the user group itself is the billing group.'
-              )}
-            </p>
           </section>
 
           <section className='space-y-3'>

@@ -64,6 +64,9 @@ const DEFAULT_SIDEBAR_MODULES: SidebarModulesAdminConfig = {
   personal: {
     enabled: true,
     topup: true,
+    plans: true,
+    earnings: true,
+    billing: true,
     personal: true,
   },
   business: {
@@ -114,11 +117,13 @@ const mergeWithDefaultSidebarModules = (
 /**
  * Mapping from sidebar URL to its `sidebar_modules` section/module keys.
  *
- * Lookups use the longest registered prefix (see `findConfigMapping`), so a
- * group landing page (`/business-settings/billing`) and every section under
- * it (`/business-settings/billing/quota`) resolve to the same module. That
- * is what makes the nested business / system workspaces filterable per
- * module rather than all-or-nothing.
+ * This table is a whitelist: a navigation entry is only rendered when its URL
+ * is registered here (see `isModuleEnabled`). Lookups use the longest
+ * registered prefix (see `findConfigMapping`), so a group landing page
+ * (`/business-settings/billing`) and every section under it
+ * (`/business-settings/billing/quota`) resolve to the same module. That is
+ * what makes the nested business / system workspaces filterable per module
+ * rather than all-or-nothing.
  */
 const URL_TO_CONFIG_MAP: Record<string, { section: string; module: string }> = {
   // General
@@ -134,6 +139,9 @@ const URL_TO_CONFIG_MAP: Record<string, { section: string; module: string }> = {
   '/usage-logs/task': { section: 'console', module: 'task' },
   // Personal
   '/wallet': { section: 'personal', module: 'topup' },
+  '/plans': { section: 'personal', module: 'plans' },
+  '/earnings': { section: 'personal', module: 'earnings' },
+  '/billing': { section: 'personal', module: 'billing' },
   '/profile': { section: 'personal', module: 'personal' },
   // Business management
   '/business-settings': { section: 'business', module: 'billing' },
@@ -162,7 +170,8 @@ const URL_TO_CONFIG_MAP: Record<string, { section: string; module: string }> = {
  *
  * Prefixes only match on path boundaries, so `/users` never captures
  * `/users-archive`. Returns `undefined` when no mapping applies, which the
- * caller treats as "visible" (new features stay visible until mapped).
+ * caller treats as "hidden" — an unmapped route is not part of any navigation
+ * surface until it is registered here.
  */
 function findConfigMapping(
   url: string
@@ -223,10 +232,13 @@ function parseUserSidebarConfig(
 }
 
 /**
- * Check if a module is enabled. Admin config is the first (authoritative)
- * layer: if admin disables a section/module it is always hidden. User config
- * is a second narrower layer: it can only further hide what admin allowed.
- * A null user config means "do not narrow" (legacy/empty users).
+ * Check if a module is enabled. A URL that is not registered in
+ * `URL_TO_CONFIG_MAP` is never enabled: the map is the whitelist that decides
+ * which routes may appear in navigation at all. Admin config is then the
+ * first (authoritative) layer: if admin disables a section/module it is
+ * always hidden. User config is a second narrower layer: it can only further
+ * hide what admin allowed. A null user config means "do not narrow"
+ * (legacy/empty users).
  */
 function isModuleEnabled(
   url: string,
@@ -235,9 +247,11 @@ function isModuleEnabled(
 ): boolean {
   const mapping = findConfigMapping(url)
   if (!mapping) {
-    // No mapping config, default to visible (new features stay visible
-    // until they are explicitly mapped)
-    return true
+    // Whitelist: an unregistered URL is hidden. Registering the route in
+    // URL_TO_CONFIG_MAP is what grants it a navigation entry, which in turn
+    // guarantees every visible entry is one an administrator can disable and
+    // a user can narrow through sidebar_modules.
+    return false
   }
 
   const { section, module } = mapping

@@ -548,9 +548,15 @@ export function useCommonLogsColumns(isAdmin: boolean): ColumnDef<UsageLog>[] {
 
       const other = parseLogOther(log.other)
       const displayName = sensitiveVisible ? tokenName : '••••'
-      let group = log.group
-      if (!group) group = other?.group || ''
-      const groupRatio = getGroupRatio(other)
+      // Group and ratio are internal routing concepts. Admins need them to
+      // diagnose channel selection; on the client-facing side the log only has
+      // to answer what the request cost.
+      let group = ''
+      let groupRatio: number | null = null
+      if (isAdmin) {
+        group = log.group || other?.group || ''
+        groupRatio = getGroupRatio(other)
+      }
 
       return (
         <div className='flex max-w-[200px] flex-col gap-0.5'>

@@ -799,37 +799,29 @@ export function buildSupportedParameters(
 }
 
 export type RateLimit = {
-  group: string
   rpm: number
   tpm: number
   rpd: number
 }
 
-/** Build per-group RPM / TPM / RPD limits for the model. */
+/** Build the published RPM / TPM / RPD limits for the model. */
 export function buildRateLimits(model: PricingModel): RateLimit[] {
-  const groups = (model.enable_groups ?? []).filter((g) => g && g !== 'auto')
-  const targets = groups.length > 0 ? groups : ['default']
   const cat = apiCategoryOf(model)
-  const baseSeed = hashStringToSeed(`${model.model_name}:rl`)
+  const rand = seededRandom(hashStringToSeed(`${model.model_name}:rl`))
+  const tier = 0.6 + rand() * 1.4
   const isHeavy = cat === 'image' || cat === 'video'
   const isLight = cat === 'embedding'
   const baseRpm = isHeavy ? 60 : isLight ? 5_000 : 500
   const baseTpm = isHeavy ? 0 : isLight ? 1_000_000 : 200_000
   const baseRpd = isHeavy ? 1_000 : isLight ? 100_000 : 10_000
 
-  return targets
-    .slice()
-    .sort((a, b) => a.localeCompare(b))
-    .map((group) => {
-      const rand = seededRandom(baseSeed ^ hashStringToSeed(group))
-      const tier = 0.6 + rand() * 1.4
-      return {
-        group,
-        rpm: Math.round((baseRpm * tier) / 10) * 10,
-        tpm: baseTpm === 0 ? 0 : Math.round((baseTpm * tier) / 1_000) * 1_000,
-        rpd: Math.round((baseRpd * tier) / 100) * 100,
-      }
-    })
+  return [
+    {
+      rpm: Math.round((baseRpm * tier) / 10) * 10,
+      tpm: baseTpm === 0 ? 0 : Math.round((baseTpm * tier) / 1_000) * 1_000,
+      rpd: Math.round((baseRpd * tier) / 100) * 100,
+    },
+  ]
 }
 
 /** Format an integer rate-limit value compactly. */

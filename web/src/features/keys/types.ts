@@ -50,6 +50,17 @@ export const apiKeySchema = z.object({
 
 export type ApiKey = z.infer<typeof apiKeySchema>
 
+/**
+ * A group entry as returned by `getUserGroups`: `auto` plus every concrete
+ * group name the user may be routed to.
+ */
+export type ApiKeyGroupOption = {
+  value: string
+  label: string
+  desc?: string
+  ratio?: number | string
+}
+
 // ============================================================================
 // API Request/Response Types
 // ============================================================================

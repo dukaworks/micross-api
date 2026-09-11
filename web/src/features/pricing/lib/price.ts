@@ -18,9 +18,12 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { formatCurrencyFromUSD } from '@/lib/currency'
 
-import { QUOTA_TYPE_VALUES, TOKEN_UNIT_DIVISORS } from '../constants'
-import type { PricingModel, TokenUnit, PriceType } from '../types'
-import { getConfiguredGroupRatio, getDisplayGroupRatio } from './model-helpers'
+import {
+  DEFAULT_TOKEN_UNIT,
+  QUOTA_TYPE_VALUES,
+  TOKEN_UNIT_DIVISORS,
+} from '../constants'
+import type { PricingModel, PriceType } from '../types'
 
 // ----------------------------------------------------------------------------
 // Price Calculation Utilities
@@ -55,17 +58,17 @@ export function stripTrailingZeros(formatted: string): string {
 }
 
 /**
- * Calculate token price in USD.
+ * Calculate token price in USD using the official catalog ratio.
+ *
+ * The model square is a public price list, so it always shows the official
+ * catalog price. Viewer-specific discounts are resolved by the backend and
+ * are not applied here.
  *
  * Returns NaN when the required ratio field is missing/null so callers can
  * skip rendering that price type.
  */
-function calculateTokenPrice(
-  model: PricingModel,
-  type: PriceType,
-  ratio: number
-): number {
-  const base = model.model_ratio * 2 * ratio
+function calculateTokenPrice(model: PricingModel, type: PriceType): number {
+  const base = model.model_ratio * 2
 
   switch (type) {
     case 'input':
@@ -103,69 +106,17 @@ function hasRatio(value: number | null | undefined): boolean {
 }
 
 /**
- * Apply recharge rate to price
- *
- * priceRate represents how much users need to recharge (in the display currency)
- * to get 1 USD credit. usdExchangeRate is the real exchange rate.
- *
- * The returned value will be formatted by formatCurrencyFromUSD, which will
- * multiply by the display currency's exchange rate.
- *
- * Examples:
- *
- * 1. Display currency = USD:
- *    - Model: 1 USD
- *    - priceRate = 0.5 (recharge $0.5 to get $1 credit)
- *    - usdExchangeRate = 1
- *    - Return: 1 × 0.5 / 1 = 0.5
- *    - formatCurrencyFromUSD(0.5) → $0.5 ✓
- *
- * 2. Display currency = CNY:
- *    - Model: 1 USD
- *    - priceRate = 4 (recharge ¥4 to get $1 credit)
- *    - usdExchangeRate = 7 (real rate: 1 USD = ¥7)
- *    - Return: 1 × 4 / 7 = 0.571
- *    - formatCurrencyFromUSD(0.571) → 0.571 × 7 = ¥4 ✓
- *    - Normal price: ¥7, Recharge price: ¥4 (cheaper!)
+ * Format token-based price for display, per 1M tokens.
  */
-function applyRechargeRate(
-  price: number,
-  showWithRecharge: boolean,
-  priceRate: number,
-  usdExchangeRate: number
-): number {
-  if (!showWithRecharge) return price
-  return (price * priceRate) / usdExchangeRate
-}
-
-/**
- * Format token-based price for display
- */
-export function formatPrice(
-  model: PricingModel,
-  type: PriceType,
-  tokenUnit: TokenUnit,
-  showWithRecharge = false,
-  priceRate = 1,
-  usdExchangeRate = 1,
-  selectedGroup?: string
-): string {
+export function formatPrice(model: PricingModel, type: PriceType): string {
   if (model.quota_type === QUOTA_TYPE_VALUES.REQUEST) {
     return '-'
   }
 
-  const displayGroupRatio = getDisplayGroupRatio(model, selectedGroup)
+  const priceInUSD =
+    calculateTokenPrice(model, type) / TOKEN_UNIT_DIVISORS[DEFAULT_TOKEN_UNIT]
 
-  let priceInUSD = calculateTokenPrice(model, type, displayGroupRatio)
-  priceInUSD = applyRechargeRate(
-    priceInUSD,
-    showWithRecharge,
-    priceRate,
-    usdExchangeRate
-  )
-
-  const price = priceInUSD / TOKEN_UNIT_DIVISORS[tokenUnit]
-  return formatCurrencyFromUSD(price, {
+  return formatCurrencyFromUSD(priceInUSD, {
     digitsLarge: 4,
     digitsSmall: 6,
     abbreviate: false,
@@ -173,98 +124,14 @@ export function formatPrice(
 }
 
 /**
- * Format price for a specific group (token-based)
+ * Format fixed price for pay-per-request models.
  */
-export function formatGroupPrice(
-  model: PricingModel,
-  group: string,
-  type: PriceType,
-  tokenUnit: TokenUnit,
-  showWithRecharge = false,
-  priceRate = 1,
-  usdExchangeRate = 1,
-  groupRatio: Record<string, number>
-): string {
-  if (model.quota_type === QUOTA_TYPE_VALUES.REQUEST) {
-    return '-'
-  }
-
-  const ratio = getConfiguredGroupRatio(groupRatio, group)
-  let priceInUSD = calculateTokenPrice(model, type, ratio)
-
-  priceInUSD = applyRechargeRate(
-    priceInUSD,
-    showWithRecharge,
-    priceRate,
-    usdExchangeRate
-  )
-
-  const price = priceInUSD / TOKEN_UNIT_DIVISORS[tokenUnit]
-  return formatCurrencyFromUSD(price, {
-    digitsLarge: 4,
-    digitsSmall: 6,
-    abbreviate: false,
-  })
-}
-
-/**
- * Format fixed price for pay-per-request models (with specific group)
- */
-export function formatFixedPrice(
-  model: PricingModel,
-  group: string,
-  showWithRecharge = false,
-  priceRate = 1,
-  usdExchangeRate = 1,
-  groupRatio: Record<string, number>
-): string {
+export function formatRequestPrice(model: PricingModel): string {
   if (model.quota_type !== QUOTA_TYPE_VALUES.REQUEST) {
     return '-'
   }
 
-  const ratio = getConfiguredGroupRatio(groupRatio, group)
-  let priceInUSD = (model.model_price || 0) * ratio
-
-  priceInUSD = applyRechargeRate(
-    priceInUSD,
-    showWithRecharge,
-    priceRate,
-    usdExchangeRate
-  )
-
-  return formatCurrencyFromUSD(priceInUSD, {
-    digitsLarge: 4,
-    digitsSmall: 4,
-    abbreviate: false,
-  })
-}
-
-/**
- * Format fixed price for pay-per-request models (minimum price from all groups)
- */
-export function formatRequestPrice(
-  model: PricingModel,
-  showWithRecharge = false,
-  priceRate = 1,
-  usdExchangeRate = 1,
-  selectedGroup?: string
-): string {
-  if (model.quota_type !== QUOTA_TYPE_VALUES.REQUEST) {
-    return '-'
-  }
-
-  const displayGroupRatio = getDisplayGroupRatio(model, selectedGroup)
-
-  let priceInUSD = (model.model_price || 0) * displayGroupRatio
-
-  priceInUSD = applyRechargeRate(
-    priceInUSD,
-    showWithRecharge,
-    priceRate,
-    usdExchangeRate
-  )
-
-  return formatCurrencyFromUSD(priceInUSD, {
+  return formatCurrencyFromUSD(model.model_price || 0, {
     digitsLarge: 4,
     digitsSmall: 4,
     abbreviate: false,
