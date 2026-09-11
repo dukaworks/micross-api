@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import { IconBadge } from '@/components/ui/icon-badge'
@@ -166,9 +167,7 @@ export function AudioPreviewDialog(props: AudioPreviewDialogProps) {
       bodyClassName='space-y-4'
     >
       {clips.length === 0 ? (
-        <p className='text-muted-foreground py-4 text-center text-sm'>
-          {t('None')}
-        </p>
+        <EmptyState title={t('None')} size='sm' />
       ) : (
         <ScrollArea className='max-h-[60vh]'>
           <div className='space-y-3 pr-2'>

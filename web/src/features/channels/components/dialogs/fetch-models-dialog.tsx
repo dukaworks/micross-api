@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -372,25 +373,20 @@ export function FetchModelsDialog({
 
   let dialogBody: ReactNode
   if (!activeChannel && !customFetcher) {
-    dialogBody = (
-      <div className='text-muted-foreground py-8 text-center'>
-        {t('No channel selected')}
-      </div>
-    )
+    dialogBody = <EmptyState title={t('No channel selected')} size='sm' />
   } else if (isFetching) {
     dialogBody = <LoadingState size='sm' />
   } else if (fetchedModels.length === 0 && removedModels.length === 0) {
     dialogBody = (
-      <div className='text-muted-foreground py-8 text-center'>
-        <p>{t('No models fetched yet.')}</p>
-        <Button
-          className='mt-4'
-          onClick={handleFetchModels}
-          disabled={isFetching}
-        >
-          {t('Fetch Models')}
-        </Button>
-      </div>
+      <EmptyState
+        title={t('No models fetched yet.')}
+        action={
+          <Button onClick={handleFetchModels} disabled={isFetching}>
+            {t('Fetch Models')}
+          </Button>
+        }
+        size='sm'
+      />
     )
   } else {
     dialogBody = (

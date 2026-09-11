@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
+import { LoadingState } from '@/components/loading-state'
 import { formatTimestampToDate } from '@/lib/format'
 
 import { getAffinityUsageCache } from './api'
@@ -146,9 +148,7 @@ export function CacheStatsDialog(props: Props) {
         )}
       </p>
       {loading ? (
-        <div className='text-muted-foreground py-8 text-center text-sm'>
-          {t('Loading...')}
-        </div>
+        <LoadingState size='sm' />
       ) : rows.length > 0 ? (
         <div className='space-y-2'>
           {rows.map((row) => (
@@ -164,9 +164,7 @@ export function CacheStatsDialog(props: Props) {
           ))}
         </div>
       ) : (
-        <div className='text-muted-foreground py-8 text-center text-sm'>
-          {t('No data available')}
-        </div>
+        <EmptyState title={t('No data available')} size='sm' />
       )}
     </Dialog>
   )

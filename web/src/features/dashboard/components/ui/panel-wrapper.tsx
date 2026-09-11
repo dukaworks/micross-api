@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { EmptyState } from '@/components/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
@@ -89,12 +90,12 @@ export function PanelWrapper(props: PanelWrapperProps) {
         <PanelHeader title={props.title} description={props.description} />
         <div
           className={cn(
-            'text-muted-foreground flex items-center justify-center px-4 text-sm',
+            'flex min-h-0 flex-col',
             height,
             props.contentClassName
           )}
         >
-          {resolvedEmptyMessage}
+          <EmptyState title={resolvedEmptyMessage} size='sm' />
         </div>
       </div>
     )

@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { Label } from '@/components/ui/label'
 import { formatQuota, formatCompactNumber } from '@/lib/format'
@@ -175,9 +176,7 @@ export function UserInfoDialog({
           )}
         </div>
       ) : (
-        <div className='text-muted-foreground py-8 text-center text-sm'>
-          {t('No user information available')}
-        </div>
+        <EmptyState title={t('No user information available')} size='sm' />
       )}
     </Dialog>
   )

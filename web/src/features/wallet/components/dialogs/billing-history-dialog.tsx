@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { StatusBadge } from '@/components/status-badge'
 import {
   AlertDialog,
@@ -167,16 +168,15 @@ export function BillingHistoryDialog({
                 ))}
               </div>
             ) : records.length === 0 ? (
-              <div className='text-muted-foreground flex min-h-40 flex-col items-center justify-center py-10 text-center'>
-                <p className='text-sm font-medium'>
-                  {t('No billing records found')}
-                </p>
-                <p className='mt-1 text-xs'>
-                  {keyword
+              <EmptyState
+                title={t('No billing records found')}
+                description={
+                  keyword
                     ? t('Try adjusting your search')
-                    : t('Your transaction history will appear here')}
-                </p>
-              </div>
+                    : t('Your transaction history will appear here')
+                }
+                size='sm'
+              />
             ) : (
               <div className='space-y-3'>
                 {records.map((record) => {

@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -390,9 +391,10 @@ export function OllamaModelsDialog({
       }
     >
       {!isOllamaChannel ? (
-        <div className='text-muted-foreground py-8 text-center'>
-          {t('This channel is not an Ollama channel.')}
-        </div>
+        <EmptyState
+          title={t('This channel is not an Ollama channel.')}
+          size='sm'
+        />
       ) : (
         <div className='space-y-4 py-2 pr-1'>
           <div className='flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between'>
@@ -511,9 +513,7 @@ export function OllamaModelsDialog({
             <div className='overflow-hidden rounded-md border'>
               <div className='max-h-[420px] overflow-y-auto'>
                 {filteredModels.length === 0 ? (
-                  <div className='text-muted-foreground p-6 text-center text-sm'>
-                    {t('No models found.')}
-                  </div>
+                  <EmptyState title={t('No models found.')} size='sm' />
                 ) : (
                   <div className='divide-y'>
                     {filteredModels.map((m) => {

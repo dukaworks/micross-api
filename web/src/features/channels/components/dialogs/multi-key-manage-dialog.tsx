@@ -25,6 +25,7 @@ import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { StaticDataTable } from '@/components/data-table'
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
@@ -382,9 +383,7 @@ export function MultiKeyManageDialog({
             {isLoading ? (
               <LoadingState size='sm' />
             ) : keys.length === 0 ? (
-              <div className='text-muted-foreground py-12 text-center'>
-                {t('No keys found')}
-              </div>
+              <EmptyState title={t('No keys found')} size='sm' />
             ) : (
               <StaticDataTable
                 className='rounded-none border-0'

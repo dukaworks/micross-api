@@ -22,6 +22,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
@@ -130,12 +131,11 @@ export function MissingModelsDialog({
       {isLoading ? (
         <LoadingState size='sm' />
       ) : missingModels.length === 0 ? (
-        <div className='text-muted-foreground py-12 text-center'>
-          <p>{t('No missing models found.')}</p>
-          <p className='text-sm'>
-            {t('All models in use are properly configured.')}
-          </p>
-        </div>
+        <EmptyState
+          title={t('No missing models found.')}
+          description={t('All models in use are properly configured.')}
+          size='sm'
+        />
       ) : (
         <div className='flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto'>
           <div className='flex flex-shrink-0 items-center justify-between gap-3'>

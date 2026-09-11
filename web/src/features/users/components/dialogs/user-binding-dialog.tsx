@@ -33,6 +33,7 @@ import { toast } from 'sonner'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Dialog } from '@/components/dialog'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
@@ -370,11 +371,14 @@ export function UserBindingDialog(props: Props) {
 
             <ScrollArea className='max-h-[50vh]'>
               {displayedBindings.length === 0 ? (
-                <p className='text-muted-foreground py-4 text-center text-sm'>
-                  {showBoundOnly
-                    ? t('This user has no bindings')
-                    : t('No providers available')}
-                </p>
+                <EmptyState
+                  title={
+                    showBoundOnly
+                      ? t('This user has no bindings')
+                      : t('No providers available')
+                  }
+                  size='sm'
+                />
               ) : (
                 <div className='grid grid-cols-1 gap-2 pr-3 lg:grid-cols-2'>
                   {displayedBindings.map((binding) => (
