@@ -25,6 +25,7 @@ import { Dialog } from '@/components/dialog'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import {
+  EMPTY_SIZE,
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -33,6 +34,7 @@ import {
 } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { cn } from '@/lib/utils'
 
 import { getMissingModels } from '../../api'
 import { DEFAULT_PAGE_SIZE } from '../../constants'
@@ -157,7 +159,7 @@ export function MissingModelsDialog({
           </div>
 
           {filteredModels.length === 0 ? (
-            <Empty className='border'>
+            <Empty className={cn(EMPTY_SIZE.sm, 'border')}>
               <EmptyHeader>
                 <EmptyMedia variant='icon'>
                   <Search className='h-5 w-5' />

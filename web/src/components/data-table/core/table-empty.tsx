@@ -20,7 +20,9 @@ import { Database } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import {
+  EMPTY_SIZE,
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -71,8 +73,8 @@ export function TableEmpty({
     description ?? t('No records found. Try adjusting your filters.')
   return (
     <TableRow>
-      <TableCell colSpan={colSpan} className='h-[400px] p-0'>
-        <Empty>
+      <TableCell colSpan={colSpan} className='p-0'>
+        <Empty className={EMPTY_SIZE.lg}>
           <EmptyHeader>
             <EmptyMedia variant='icon'>
               {icon || <Database className='size-6' />}
@@ -80,7 +82,7 @@ export function TableEmpty({
             <EmptyTitle>{resolvedTitle}</EmptyTitle>
             <EmptyDescription>{resolvedDescription}</EmptyDescription>
           </EmptyHeader>
-          {children}
+          {children != null && <EmptyContent>{children}</EmptyContent>}
         </Empty>
       </TableCell>
     </TableRow>

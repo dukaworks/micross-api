@@ -16,14 +16,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Logout01Icon, SmartPhone01Icon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { LogOut, Smartphone } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
+import { EmptyState } from '@/components/empty-state'
+import { ErrorState } from '@/components/error-state'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -33,13 +34,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { clearAuthenticatedClientState } from '@/lib/api'
@@ -126,35 +120,21 @@ export function LoginSessionsCard() {
     )
   } else if (sessionsQuery.isError) {
     sessionsContent = (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant='icon'>
-            <HugeiconsIcon icon={SmartPhone01Icon} strokeWidth={2} />
-          </EmptyMedia>
-          <EmptyTitle>{t('Unable to load login sessions')}</EmptyTitle>
-          <EmptyDescription>
-            {t('Refresh the list and try again.')}
-          </EmptyDescription>
-        </EmptyHeader>
-        <Button
-          type='button'
-          variant='outline'
-          onClick={() => sessionsQuery.refetch()}
-        >
-          {t('Retry')}
-        </Button>
-      </Empty>
+      <ErrorState
+        icon={Smartphone}
+        title={t('Unable to load login sessions')}
+        description={t('Refresh the list and try again.')}
+        onRetry={() => sessionsQuery.refetch()}
+        size='sm'
+      />
     )
   } else if (sessions.length === 0) {
     sessionsContent = (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant='icon'>
-            <HugeiconsIcon icon={SmartPhone01Icon} strokeWidth={2} />
-          </EmptyMedia>
-          <EmptyTitle>{t('No active login sessions')}</EmptyTitle>
-        </EmptyHeader>
-      </Empty>
+      <EmptyState
+        icon={Smartphone}
+        title={t('No active login sessions')}
+        size='sm'
+      />
     )
   } else {
     sessionsContent = (
@@ -185,11 +165,7 @@ export function LoginSessionsCard() {
               disabled={!hasOtherSessions || revokeOthersMutation.isPending}
               onClick={() => setConfirmOthers(true)}
             >
-              <HugeiconsIcon
-                icon={Logout01Icon}
-                data-icon='inline-start'
-                strokeWidth={2}
-              />
+              <LogOut data-icon='inline-start' />
               {t('Sign out other sessions')}
             </Button>
           </CardAction>

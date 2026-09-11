@@ -65,6 +65,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import {
+  EMPTY_SIZE,
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -797,7 +798,7 @@ function ResetCreditsPanel(props: {
     )
   } else {
     creditsContent = (
-      <Empty className='min-h-32 border'>
+      <Empty className={cn(EMPTY_SIZE.sm, 'border')}>
         <EmptyHeader>
           <EmptyTitle>{t('No reset credits')}</EmptyTitle>
           <EmptyDescription>

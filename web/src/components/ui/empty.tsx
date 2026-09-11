@@ -20,6 +20,20 @@ import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
+/**
+ * 空态 / 加载态 / 错误态共用的区块高度档位。
+ *
+ * 这三档是唯一的取值，调用点不要再写 `min-h-[320px]` 之类的散值。
+ * `sm` 用于弹窗与小面板，`md` 是默认，`lg` 用于整页与表格。
+ */
+export const EMPTY_SIZE = {
+  sm: 'min-h-[200px]',
+  md: 'min-h-[300px]',
+  lg: 'min-h-[400px]',
+} as const
+
+export type EmptySize = keyof typeof EMPTY_SIZE
+
 // 基元默认不画边框。只写 border-dashed 而不写 border 时边框宽度是 0，什么也看不到；
 // 需要带虚线框的空态，请在调用方显式传 'border border-dashed'。
 function Empty({ className, ...props }: React.ComponentProps<'div'>) {

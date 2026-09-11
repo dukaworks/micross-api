@@ -23,12 +23,14 @@ import { useTranslation } from 'react-i18next'
 import { FadeIn } from '@/components/page-transition'
 import { Button } from '@/components/ui/button'
 import {
+  EMPTY_SIZE,
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
+  type EmptySize,
 } from '@/components/ui/empty'
 import { cn } from '@/lib/utils'
 
@@ -38,6 +40,8 @@ interface ErrorStateProps {
   description?: string
   onRetry?: () => void
   action?: ReactNode
+  /** 区块高度档位，默认 md。弹窗与小面板用 sm，整页与表格用 lg。 */
+  size?: EmptySize
   className?: string
 }
 
@@ -45,9 +49,10 @@ export function ErrorState(props: ErrorStateProps) {
   const { t } = useTranslation()
   const Icon = props.icon ?? AlertTriangle
 
+  // FadeIn 这一层带上 flex 布局，Empty 的 flex-1 才能真正撑开父容器。
   return (
-    <FadeIn>
-      <Empty className={cn('min-h-[300px]', props.className)}>
+    <FadeIn className='flex min-h-0 flex-1 flex-col'>
+      <Empty className={cn(EMPTY_SIZE[props.size ?? 'md'], props.className)}>
         <EmptyHeader>
           <EmptyMedia variant='icon'>
             <Icon className='text-destructive size-6' />

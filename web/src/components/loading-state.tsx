@@ -19,19 +19,29 @@ For commercial licensing, please contact support@quantumnous.com
 import { Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { FadeIn } from '@/components/page-transition'
+import {
+  EMPTY_SIZE,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  type EmptySize,
+} from '@/components/ui/empty'
 import { cn } from '@/lib/utils'
 
 interface LoadingStateProps {
   className?: string
   message?: string
-  size?: 'sm' | 'md' | 'lg'
+  /** 区块高度档位，默认 md。弹窗与小面板用 sm，整页与表格用 lg。 */
+  size?: EmptySize
   inline?: boolean
 }
 
 const sizeMap = {
   sm: 'size-4',
-  md: 'size-6',
-  lg: 'size-8',
+  md: 'size-5',
+  lg: 'size-6',
 } as const
 
 export function LoadingState(props: LoadingStateProps) {
@@ -49,19 +59,18 @@ export function LoadingState(props: LoadingStateProps) {
     )
   }
 
+  // 与 EmptyState / ErrorState 共用同一套几何：图标徽章 + 次级文案，区块高度走 EMPTY_SIZE。
+  // FadeIn 这一层带上 flex 布局，Empty 的 flex-1 才能真正撑开父容器。
   return (
-    <div
-      className={cn(
-        'flex min-h-[200px] flex-col items-center justify-center gap-3',
-        props.className
-      )}
-    >
-      <div className='animate-spin'>
-        <Loader2 className={iconSize} />
-      </div>
-      <p className='text-muted-foreground text-sm'>
-        {props.message ?? t('Loading...')}
-      </p>
-    </div>
+    <FadeIn className='flex min-h-0 flex-1 flex-col'>
+      <Empty className={cn(EMPTY_SIZE[props.size ?? 'md'], props.className)}>
+        <EmptyHeader>
+          <EmptyMedia variant='icon'>
+            <Loader2 className={cn(iconSize, 'animate-spin')} />
+          </EmptyMedia>
+          <EmptyDescription>{props.message ?? t('Loading...')}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    </FadeIn>
   )
 }

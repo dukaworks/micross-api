@@ -33,6 +33,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { StaticDataTable } from '@/components/data-table/static/static-data-table'
 import { StaticRowActions } from '@/components/data-table/static/static-row-actions'
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { TableId } from '@/components/table-id'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -45,6 +46,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
+  EMPTY_SIZE,
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -161,30 +163,25 @@ export function PrefillGroupManagementDialog({
   let groupsContent: ReactNode
   if (isLoading) {
     groupsContent = (
-      <div className='flex flex-col items-center justify-center gap-2 py-12 text-center'>
-        <Loader2 className='text-muted-foreground h-6 w-6 animate-spin' />
-        <p className='text-muted-foreground text-sm'>
-          {t('Fetching prefill groups...')}
-        </p>
-      </div>
+      <LoadingState message={t('Fetching prefill groups...')} size='sm' />
     )
   } else if (normalizedGroups.length === 0) {
     groupsContent = (
-      <Empty className='border border-dashed py-10'>
-        <EmptyMedia variant='icon'>
-          <Layers3 className='h-6 w-6' />
-        </EmptyMedia>
+      <Empty className={cn(EMPTY_SIZE.sm, 'border')}>
         <EmptyHeader>
+          <EmptyMedia variant='icon'>
+            <Layers3 className='size-6' />
+          </EmptyMedia>
           <EmptyTitle>{t('No prefill groups yet')}</EmptyTitle>
           <EmptyDescription>
             {t(
               'Create your first group to reuse model, tag, or endpoint selections anywhere in the dashboard.'
             )}
           </EmptyDescription>
+          <EmptyDescription>
+            {t('Prefill groups help you keep complex configurations in sync.')}
+          </EmptyDescription>
         </EmptyHeader>
-        <EmptyDescription>
-          {t('Prefill groups help you keep complex configurations in sync.')}
-        </EmptyDescription>
       </Empty>
     )
   } else if (isMobile) {

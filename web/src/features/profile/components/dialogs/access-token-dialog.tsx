@@ -25,6 +25,7 @@ import { CopyButton } from '@/components/copy-button'
 import { Dialog } from '@/components/dialog'
 import { Button } from '@/components/ui/button'
 import {
+  EMPTY_SIZE,
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -33,6 +34,7 @@ import {
 } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 
 import { useAccessToken } from '../../hooks'
 
@@ -135,7 +137,7 @@ export function AccessTokenDialog({
               </p>
             </div>
           ) : (
-            <Empty className='border py-8'>
+            <Empty className={cn(EMPTY_SIZE.sm, 'border')}>
               <EmptyHeader>
                 <EmptyMedia variant='icon'>
                   <KeyRound aria-hidden='true' />
