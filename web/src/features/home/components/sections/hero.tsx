@@ -24,7 +24,9 @@ import { useTranslation } from 'react-i18next'
 
 import { Container } from '@/components/layout'
 import { Button } from '@/components/ui/button'
+import { useMediaQuery } from '@/hooks'
 import { useStatus } from '@/hooks/use-status'
+import { cn } from '@/lib/utils'
 
 import { HeroAgents } from '../hero-agents'
 import { HeroTerminalDemo } from '../hero-terminal-demo'
@@ -41,6 +43,14 @@ export function Hero(props: HeroProps) {
 
   const stageRef = useRef<HTMLElement>(null)
   const reduceMotion = useReducedMotion()
+  /*
+   * The cinematic pin only holds while the hero fits one screen. Below `lg`
+   * the two columns stack, so the copy, the agent grid and the terminal card
+   * need roughly 1000px against a ~670px phone viewport: a pinned, clipped
+   * screen would push the headline and the CTAs out of view entirely. The
+   * breakpoint MUST match the `hero-scroll-stage` rules in styles/index.css.
+   */
+  const isPinned = useMediaQuery('(min-width: 1024px)') && !reduceMotion
 
   // Progress 0 → 1 spans exactly the pinned travel, because the stage height is
   // `100svh + travel` (see `.hero-scroll-stage` in styles/index.css).
@@ -61,18 +71,20 @@ export function Hero(props: HeroProps) {
   )
   const titleY = useTransform(scrollYProgress, [0, 1], [0, -28])
 
-  const backdropStyle = reduceMotion
-    ? undefined
-    : { scale: backdropScale, opacity: backdropOpacity }
-  const contentStyle = reduceMotion
-    ? undefined
-    : {
+  // Unpinned screens have no scroll travel, so the transforms would fire
+  // against a stage that never advances — drop them and render statically.
+  const backdropStyle = isPinned
+    ? { scale: backdropScale, opacity: backdropOpacity }
+    : undefined
+  const contentStyle = isPinned
+    ? {
         scale: contentScale,
         y: contentY,
         opacity: contentOpacity,
         filter: contentBlur,
       }
-  const titleStyle = reduceMotion ? undefined : { y: titleY }
+    : undefined
+  const titleStyle = isPinned ? { y: titleY } : undefined
 
   const renderDocsButton = () => {
     if (!docsUrl) return null
@@ -128,10 +140,18 @@ export function Hero(props: HeroProps) {
     <section
       ref={stageRef}
       data-hero-stage
-      className='dark hero-scroll-stage text-foreground relative z-10 bg-black'
+      className={cn(
+        'dark text-foreground relative z-10 bg-black',
+        isPinned && 'hero-scroll-stage'
+      )}
     >
-      {/* Pinned screen: stays put for the whole travel distance. */}
-      <div className='sticky top-0 h-svh overflow-hidden'>
+      {/* Pinned screen: stays put for the whole travel distance. Unpinned
+          screens (below `lg`, or reduced motion) are plain flow blocks. */}
+      <div
+        className={cn(
+          isPinned ? 'sticky top-0 h-svh overflow-hidden' : 'relative'
+        )}
+      >
         <motion.div
           aria-hidden
           className='pointer-events-none absolute inset-0'
@@ -163,11 +183,24 @@ export function Hero(props: HeroProps) {
           className='pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black/70'
         />
 
+        {/*
+         * `py-28` on unpinned screens keeps the copy clear of the floating
+         * header, which PublicLayout does not offset for a full-bleed page.
+         */}
         <motion.div
-          className='relative flex h-full items-center'
+          className={cn(
+            'relative flex',
+            isPinned ? 'h-full' : 'min-h-svh py-28'
+          )}
           style={contentStyle}
         >
-          <Container className='grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8'>
+          {/*
+           * `my-auto` where `items-center` used to sit: auto margins collapse
+           * to zero once the content outgrows the screen, so a short viewport
+           * keeps the headline pinned to the top instead of clipping it off
+           * both ends.
+           */}
+          <Container className='my-auto grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8'>
             {/* Left Column: Title, description, action buttons and application support */}
             <div className='flex flex-col items-start text-left lg:col-span-6'>
               {/* Top Pill Badge */}

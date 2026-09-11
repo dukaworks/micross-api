@@ -613,30 +613,27 @@ For commercial licensing, please contact support@quantumnous.com
  * pulls the following sections up by that same distance so the page still
  * advances exactly one viewport. The two MUST stay in sync.
  *
- * Under `prefers-reduced-motion` the travel collapses to zero: the stage
- * becomes a plain one-screen section and the transition disappears, without
- * any JS branch.
+ * The pin is a desktop treatment only. `isPinned` in
+ * `features/home/components/sections/hero.tsx` omits the class below 1024px and
+ * under `prefers-reduced-motion`, so the stage never exists there and only the
+ * overlap has to be neutralised. The breakpoint MUST stay in sync with that
+ * media query.
  * ------------------------------------------------------------------------- */
 .hero-scroll-stage {
-  height: calc(100svh + 60svh);
+  height: calc(100svh + 100svh);
 }
 .hero-content-overlap {
-  margin-top: -60svh;
+  margin-top: -100svh;
 }
 
-@media (min-width: 768px) {
-  .hero-scroll-stage {
-    height: calc(100svh + 100svh);
-  }
+/* Unpinned stages reserve no travel, so nothing may be pulled up. */
+@media (max-width: 1023px) {
   .hero-content-overlap {
-    margin-top: -100svh;
+    margin-top: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-scroll-stage {
-    height: 100svh;
-  }
   .hero-content-overlap {
     margin-top: 0;
   }
