@@ -18,13 +18,23 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
-import { AUTH_DEFAULT_SECTION } from '@/features/system-settings/auth/section-registry.tsx'
+import { PoliciesSettings } from '@/features/system-settings/policies'
+import {
+  POLICIES_DEFAULT_SECTION,
+  POLICIES_SECTION_IDS,
+} from '@/features/system-settings/policies/section-registry.tsx'
 
-export const Route = createFileRoute('/_authenticated/system-settings/')({
-  beforeLoad: () => {
-    throw redirect({
-      to: '/system-settings/auth/$section',
-      params: { section: AUTH_DEFAULT_SECTION },
-    })
+export const Route = createFileRoute(
+  '/_authenticated/business-settings/policies/$section'
+)({
+  beforeLoad: ({ params }) => {
+    const validSections = POLICIES_SECTION_IDS as unknown as string[]
+    if (!validSections.includes(params.section)) {
+      throw redirect({
+        to: '/business-settings/policies/$section',
+        params: { section: POLICIES_DEFAULT_SECTION },
+      })
+    }
   },
+  component: PoliciesSettings,
 })

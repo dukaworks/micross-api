@@ -129,7 +129,7 @@ const OPERATIONS_SECTIONS = [
   },
   {
     id: 'update-checker',
-    titleKey: 'System maintenance',
+    titleKey: 'Version & Updates',
     build: (
       _settings: OperationsSettings,
       currentVersion?: string | null,

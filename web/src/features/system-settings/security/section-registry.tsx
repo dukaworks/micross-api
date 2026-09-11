@@ -16,31 +16,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { RateLimitSection } from '../request-limits/rate-limit-section'
 import { SensitiveWordsSection } from '../request-limits/sensitive-words-section'
 import { SSRFSection } from '../request-limits/ssrf-section'
-import { TokenLimitSection } from '../request-limits/token-limit-section'
 import type { SecuritySettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
 
+/**
+ * 安全防护配置组（系统管理）。
+ *
+ * 面向用户的额度策略（请求限流、单账号 Token 上限）属于业务
+ * 规则，已迁移到 `system-settings/policies`，见
+ * `/business-settings/policies/rate-limit` 与 `/token-limits`。
+ */
 const SECURITY_SECTIONS = [
-  {
-    id: 'rate-limit',
-    titleKey: 'Rate Limiting',
-    build: (settings: SecuritySettings) => (
-      <RateLimitSection
-        defaultValues={{
-          ModelRequestRateLimitEnabled: settings.ModelRequestRateLimitEnabled,
-          ModelRequestRateLimitCount: settings.ModelRequestRateLimitCount,
-          ModelRequestRateLimitSuccessCount:
-            settings.ModelRequestRateLimitSuccessCount,
-          ModelRequestRateLimitDurationMinutes:
-            settings.ModelRequestRateLimitDurationMinutes,
-          ModelRequestRateLimitGroup: settings.ModelRequestRateLimitGroup,
-        }}
-      />
-    ),
-  },
   {
     id: 'sensitive-words',
     titleKey: 'Sensitive Words',
@@ -78,18 +66,6 @@ const SECURITY_SECTIONS = [
       />
     ),
   },
-  {
-    id: 'token-limits',
-    titleKey: 'Token Limits',
-    build: (settings: SecuritySettings) => (
-      <TokenLimitSection
-        defaultValues={{
-          'token_setting.max_user_tokens':
-            settings['token_setting.max_user_tokens'],
-        }}
-      />
-    ),
-  },
 ] as const
 
 export type SecuritySectionId = (typeof SECURITY_SECTIONS)[number]['id']
@@ -99,7 +75,7 @@ const securityRegistry = createSectionRegistry<
   SecuritySettings
 >({
   sections: SECURITY_SECTIONS,
-  defaultSection: 'rate-limit',
+  defaultSection: 'sensitive-words',
   basePath: '/system-settings/security',
   urlStyle: 'path',
 })

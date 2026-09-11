@@ -32,7 +32,7 @@ import { createSectionRegistry } from '../utils/section-registry'
 const SITE_SECTIONS = [
   {
     id: 'system-info',
-    titleKey: 'System Information',
+    titleKey: 'Site Information',
     build: (settings: SiteSettings) => (
       <SystemInfoSection
         defaultValues={{
@@ -94,7 +94,7 @@ export type SiteSectionId = (typeof SITE_SECTIONS)[number]['id']
 const siteRegistry = createSectionRegistry<SiteSectionId, SiteSettings>({
   sections: SITE_SECTIONS,
   defaultSection: 'system-info',
-  basePath: '/system-settings/site',
+  basePath: '/business-settings/site',
   urlStyle: 'path',
 })
 

@@ -35,14 +35,15 @@ const ROOT_VIEW_KEY = '__root'
  * Resolve the active sidebar view for the current location.
  *
  * - Returns the matching nested {@link SidebarView} (with its nav
- *   groups) when the URL belongs to a registered drill-in workspace.
- * - Otherwise returns the root navigation, narrowed by:
- *     · admin-only group visibility (role-based);
- *     · `useSidebarConfig` (admin × user `sidebar_modules` overlay).
+ *   groups) when the URL belongs to a registered drill-in workspace the
+ *   user is allowed to enter (`view.requiredRole`).
+ * - Otherwise returns the root navigation, narrowed by role-based
+ *   `requiredRole` filtering and `useSidebarConfig`
+ *   (admin × user `sidebar_modules` overlay).
  *
- * Nested views are intentionally NOT passed through `useSidebarConfig`
- * — those filters target known dashboard URLs only, and gating is
- * already enforced at the route level (`beforeLoad` redirects).
+ * Both layers run through `useSidebarConfig` so an administrator can
+ * hand out — or withhold — individual business modules without touching
+ * the route guards, which remain the authoritative access check.
  */
 export function useSidebarView(): ResolvedSidebarView {
   const { t } = useTranslation()
@@ -53,24 +54,28 @@ export function useSidebarView(): ResolvedSidebarView {
 
   const rootNavGroups = useMemo<NavGroup[]>(() => {
     const role = userRole ?? ROLE.GUEST
-    const isAdmin = role >= ROLE.ADMIN
     return configFilteredRoot
-      .filter((group) => (group.id === 'admin' ? isAdmin : true))
       .map((group) => {
         const items = group.items.filter(
           (item) => item.requiredRole === undefined || role >= item.requiredRole
         )
         return items.length === group.items.length ? group : { ...group, items }
       })
+      .filter((group) => group.items.length > 0)
   }, [configFilteredRoot, userRole])
 
-  const view = resolveSidebarView(pathname)
+  const view = resolveSidebarView(pathname, userRole)
+  const viewNavGroups = useMemo(
+    () => (view ? view.getNavGroups(t) : []),
+    [view, t]
+  )
+  const configFilteredView = useSidebarConfig(viewNavGroups)
 
   if (view) {
     return {
       key: view.id,
       view,
-      navGroups: view.getNavGroups(t),
+      navGroups: configFilteredView,
     }
   }
 

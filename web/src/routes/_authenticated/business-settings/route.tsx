@@ -16,17 +16,26 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
-import { BILLING_DEFAULT_SECTION } from '@/features/system-settings/billing/section-registry.tsx'
+import { ROLE } from '@/lib/roles'
+import { useAuthStore } from '@/stores/auth-store'
 
-export const Route = createFileRoute(
-  '/_authenticated/system-settings/billing/'
-)({
+/**
+ * 业务管理工作区（计费、站点、控制台内容、运营策略）。
+ *
+ * 与系统管理的差异：这里的配置决定「卖什么、卖给谁、怎么收钱、
+ * 站点长什么样」，管理员即可操作；系统管理才要求超级管理员。
+ */
+export const Route = createFileRoute('/_authenticated/business-settings')({
   beforeLoad: () => {
-    throw redirect({
-      to: '/system-settings/billing/$section',
-      params: { section: BILLING_DEFAULT_SECTION },
-    })
+    const { auth } = useAuthStore.getState()
+
+    if ((auth.user?.role ?? 0) < ROLE.ADMIN) {
+      throw redirect({
+        to: '/403',
+      })
+    }
   },
+  component: Outlet,
 })

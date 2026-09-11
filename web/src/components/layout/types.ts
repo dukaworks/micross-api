@@ -122,6 +122,12 @@ export type SidebarView = {
   id: string
   /** Path matcher that activates this view */
   pathPattern: RegExp
+  /**
+   * Minimum role required to enter this workspace. Users below the threshold
+   * keep the root navigation instead of seeing a workspace whose entries they
+   * cannot open. Route-level guards still enforce access independently.
+   */
+  requiredRole?: number
   /** Back-navigation descriptor; required for nested views */
   parent: SidebarViewParent
   /** Nav group builder, called per render with the active translator */

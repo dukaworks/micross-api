@@ -65,9 +65,9 @@ export function SidebarModulesSection({
   const updateOption = useUpdateOption()
 
   const sectionMeta: Record<string, { title: string; description: string }> = {
-    chat: {
-      title: t('Chat area'),
-      description: t('Playground experiments and live conversations.'),
+    playground: {
+      title: t('Test Model'),
+      description: t('Prompt and model experiments for every signed-in user.'),
     },
     console: {
       title: t('Console area'),
@@ -77,9 +77,17 @@ export function SidebarModulesSection({
       title: t('Personal area'),
       description: t('Wallet management and personal preferences.'),
     },
-    admin: {
-      title: t('Admin area'),
-      description: t('Global configuration and administrative tools.'),
+    business: {
+      title: t('Business Management'),
+      description: t(
+        'Visible to administrators. Upstream supply, pricing, payment, site branding, console content, and access policy.'
+      ),
+    },
+    system: {
+      title: t('System Management'),
+      description: t(
+        'Visible to super administrators only. Routing, authentication, security, and operations.'
+      ),
     },
   }
 
@@ -87,14 +95,10 @@ export function SidebarModulesSection({
     string,
     Record<string, { title: string; description: string }>
   > = {
-    chat: {
+    playground: {
       playground: {
-        title: t('Playground'),
+        title: t('Test Model'),
         description: t('Experiment with prompts and models in real time.'),
-      },
-      chat: {
-        title: t('Chat'),
-        description: t('Access previous conversations and start new ones.'),
       },
     },
     console: {
@@ -129,30 +133,64 @@ export function SidebarModulesSection({
         description: t('Personal settings and profile management.'),
       },
     },
-    admin: {
-      channel: {
+    business: {
+      channels: {
         title: t('Channels'),
         description: t('Configure upstream providers and routing.'),
       },
       models: {
         title: t('Models'),
-        description: t('Manage catalog visibility and pricing.'),
+        description: t('Manage the model catalog and deployments.'),
       },
-      redemption: {
-        title: t('Redeem codes'),
-        description: t('Create and review invite or credit codes.'),
+      users: {
+        title: t('User Management'),
+        description: t('User accounts, redemption codes, and subscriptions.'),
       },
-      user: {
-        title: t('Users'),
-        description: t('Administer user accounts and roles.'),
+      billing: {
+        title: t('Billing & Pricing'),
+        description: t(
+          'Model pricing, group ratios, quota grants, and payment gateways.'
+        ),
       },
-      setting: {
-        title: t('System settings'),
-        description: t('Advanced platform configuration.'),
+      site: {
+        title: t('Site & Appearance'),
+        description: t('Site name, logo, footer, notices, and navigation.'),
       },
-      subscription: {
-        title: t('Subscription Management'),
-        description: t('Manage subscription plans and pricing.'),
+      content: {
+        title: t('Console Content'),
+        description: t(
+          'Announcements, API addresses, FAQ, status page, and presets.'
+        ),
+      },
+      policies: {
+        title: t('Access & Limits'),
+        description: t(
+          'Registration policy, request rate limits, and per-user token caps.'
+        ),
+      },
+    },
+    system: {
+      runtime: {
+        title: t('Runtime & Access'),
+        description: t('Instance status and runtime diagnostics.'),
+      },
+      auth: {
+        title: t('Authentication'),
+        description: t('OAuth providers, passkeys, and bot protection.'),
+      },
+      security: {
+        title: t('Security'),
+        description: t('Sensitive word filtering and SSRF protection.'),
+      },
+      routing: {
+        title: t('Models & Routing'),
+        description: t(
+          'Global model config, retry policy, and channel affinity.'
+        ),
+      },
+      operations: {
+        title: t('Operations'),
+        description: t('SMTP, worker proxy, logs, performance, and updates.'),
       },
     },
   }

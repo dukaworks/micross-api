@@ -118,13 +118,13 @@ export function ProfileDropdown() {
             <DropdownMenuItem
               onClick={() =>
                 navigate({
-                  to: '/system-settings/site/$section',
-                  params: { section: 'system-info' },
+                  to: '/system-settings/auth/$section',
+                  params: { section: 'oauth' },
                 })
               }
             >
               <Settings className='size-4' />
-              {t('System Settings')}
+              {t('System Management')}
             </DropdownMenuItem>
           )}
 

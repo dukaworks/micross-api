@@ -18,20 +18,14 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import {
   Activity,
-  Box,
-  CreditCard,
+  Briefcase,
   FileText,
   FlaskConical,
   Key,
   LayoutDashboard,
   ListTodo,
-  MessageSquare,
-  Radio,
-  ServerCog,
   Settings,
-  Ticket,
   User,
-  Users,
   Wallet,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -42,30 +36,20 @@ import { ROLE } from '@/lib/roles'
 /**
  * Root navigation groups for the application sidebar.
  *
- * These are shown when the URL does not match any nested sidebar view
- * registered in `layout/lib/sidebar-view-registry.ts`.
+ * Audience layering:
+ *   · General / Personal — every signed-in user;
+ *   · Business Management — administrators (`requiredRole: ROLE.ADMIN`);
+ *   · System Management — super administrators only.
+ *
+ * The two management entries are drill-in workspaces: clicking either one
+ * swaps the sidebar to the matching nested view (see
+ * `layout/config/business-settings.config.ts` and `system-settings.config.ts`).
  */
 export function useSidebarData(): SidebarData {
   const { t } = useTranslation()
 
   return {
     navGroups: [
-      {
-        id: 'chat',
-        title: t('Chat'),
-        items: [
-          {
-            title: t('Playground'),
-            url: '/playground',
-            icon: FlaskConical,
-          },
-          {
-            title: t('Chat'),
-            icon: MessageSquare,
-            type: 'chat-presets',
-          },
-        ],
-      },
       {
         id: 'general',
         title: t('General'),
@@ -97,6 +81,11 @@ export function useSidebarData(): SidebarData {
             configUrls: ['/usage-logs/drawing', '/usage-logs/task'],
             icon: ListTodo,
           },
+          {
+            title: t('Test Model'),
+            url: '/playground',
+            icon: FlaskConical,
+          },
         ],
       },
       {
@@ -116,45 +105,22 @@ export function useSidebarData(): SidebarData {
         ],
       },
       {
-        id: 'admin',
-        title: t('Admin'),
+        id: 'administration',
+        title: t('Administration'),
         items: [
           {
-            title: t('Channels'),
-            url: '/channels',
-            icon: Radio,
+            title: t('Business Management'),
+            url: '/business-settings/billing/quota',
+            configUrls: ['/business-settings'],
+            icon: Briefcase,
+            requiredRole: ROLE.ADMIN,
           },
           {
-            title: t('Models'),
-            url: '/models/metadata',
-            icon: Box,
-          },
-          {
-            title: t('Users'),
-            url: '/users',
-            icon: Users,
-          },
-          {
-            title: t('Redemption Codes'),
-            url: '/redemption-codes',
-            icon: Ticket,
-          },
-          {
-            title: t('Subscriptions'),
-            url: '/subscriptions',
-            icon: CreditCard,
-          },
-          {
-            title: t('System Info'),
-            url: '/system-info',
-            icon: ServerCog,
-            requiredRole: ROLE.SUPER_ADMIN,
-          },
-          {
-            title: t('System Settings'),
-            url: '/system-settings/site',
-            activeUrls: ['/system-settings'],
+            title: t('System Management'),
+            url: '/system-settings/auth/oauth',
+            configUrls: ['/system-settings'],
             icon: Settings,
+            requiredRole: ROLE.SUPER_ADMIN,
           },
         ],
       },

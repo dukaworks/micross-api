@@ -34,13 +34,24 @@ type SidebarModulesAdminConfig = Record<string, SidebarSectionConfig>
 type SidebarModulesUserConfig = SidebarModulesAdminConfig | null
 
 /**
- * Default sidebar modules configuration
+ * Default sidebar modules configuration.
+ *
+ * Sections mirror the sidebar's audience layering:
+ *   · `playground` / `console` — general (every signed-in user);
+ *   · `personal` — personal workspace;
+ *   · `business` — administrator workspace (upstream supply, pricing,
+ *     payment, site, content);
+ *   · `system` — super administrator workspace (runtime, routing, security,
+ *     ops).
+ *
+ * Keeping the granularity at "one module per sidebar group" lets an
+ * administrator be granted billing access without inheriting channel or
+ * routing control.
  */
 const DEFAULT_SIDEBAR_MODULES: SidebarModulesAdminConfig = {
-  chat: {
+  playground: {
     enabled: true,
     playground: true,
-    chat: true,
   },
   console: {
     enabled: true,
@@ -55,14 +66,23 @@ const DEFAULT_SIDEBAR_MODULES: SidebarModulesAdminConfig = {
     topup: true,
     personal: true,
   },
-  admin: {
+  business: {
     enabled: true,
-    channel: true,
+    channels: true,
     models: true,
-    redemption: true,
-    user: true,
-    setting: true,
-    subscription: true,
+    users: true,
+    billing: true,
+    site: true,
+    content: true,
+    policies: true,
+  },
+  system: {
+    enabled: true,
+    runtime: true,
+    auth: true,
+    security: true,
+    routing: true,
+    operations: true,
   },
 }
 
@@ -92,10 +112,17 @@ const mergeWithDefaultSidebarModules = (
 }
 
 /**
- * Mapping from URL to configuration keys
+ * Mapping from sidebar URL to its `sidebar_modules` section/module keys.
+ *
+ * Lookups use the longest registered prefix (see `findConfigMapping`), so a
+ * group landing page (`/business-settings/billing`) and every section under
+ * it (`/business-settings/billing/quota`) resolve to the same module. That
+ * is what makes the nested business / system workspaces filterable per
+ * module rather than all-or-nothing.
  */
 const URL_TO_CONFIG_MAP: Record<string, { section: string; module: string }> = {
-  '/playground': { section: 'chat', module: 'playground' },
+  // General
+  '/playground': { section: 'playground', module: 'playground' },
   '/dashboard': { section: 'console', module: 'detail' },
   '/dashboard/overview': { section: 'console', module: 'detail' },
   '/dashboard/models': { section: 'console', module: 'detail' },
@@ -105,17 +132,53 @@ const URL_TO_CONFIG_MAP: Record<string, { section: string; module: string }> = {
   '/usage-logs/common': { section: 'console', module: 'log' },
   '/usage-logs/drawing': { section: 'console', module: 'midjourney' },
   '/usage-logs/task': { section: 'console', module: 'task' },
+  // Personal
   '/wallet': { section: 'personal', module: 'topup' },
   '/profile': { section: 'personal', module: 'personal' },
-  '/channels': { section: 'admin', module: 'channel' },
-  '/models': { section: 'admin', module: 'models' },
-  '/models/metadata': { section: 'admin', module: 'models' },
-  '/models/deployments': { section: 'admin', module: 'models' },
-  '/users': { section: 'admin', module: 'user' },
-  '/redemption-codes': { section: 'admin', module: 'redemption' },
-  '/subscriptions': { section: 'admin', module: 'subscription' },
-  '/system-settings': { section: 'admin', module: 'setting' },
-  '/system-settings/site': { section: 'admin', module: 'setting' },
+  // Business management
+  '/business-settings': { section: 'business', module: 'billing' },
+  '/business-settings/billing': { section: 'business', module: 'billing' },
+  '/business-settings/site': { section: 'business', module: 'site' },
+  '/business-settings/content': { section: 'business', module: 'content' },
+  '/business-settings/policies': { section: 'business', module: 'policies' },
+  '/users': { section: 'business', module: 'users' },
+  '/redemption-codes': { section: 'business', module: 'users' },
+  '/subscriptions': { section: 'business', module: 'users' },
+  '/channels': { section: 'business', module: 'channels' },
+  '/models': { section: 'business', module: 'models' },
+  '/models/metadata': { section: 'business', module: 'models' },
+  '/models/deployments': { section: 'business', module: 'models' },
+  // System management
+  '/system-info': { section: 'system', module: 'runtime' },
+  '/system-settings': { section: 'system', module: 'routing' },
+  '/system-settings/auth': { section: 'system', module: 'auth' },
+  '/system-settings/models': { section: 'system', module: 'routing' },
+  '/system-settings/security': { section: 'system', module: 'security' },
+  '/system-settings/operations': { section: 'system', module: 'operations' },
+}
+
+/**
+ * Resolve the config mapping for a URL using the longest matching prefix.
+ *
+ * Prefixes only match on path boundaries, so `/users` never captures
+ * `/users-archive`. Returns `undefined` when no mapping applies, which the
+ * caller treats as "visible" (new features stay visible until mapped).
+ */
+function findConfigMapping(
+  url: string
+): { section: string; module: string } | undefined {
+  let matched: { section: string; module: string } | undefined
+  let matchedLength = -1
+
+  Object.entries(URL_TO_CONFIG_MAP).forEach(([prefix, mapping]) => {
+    if (prefix.length <= matchedLength) return
+    if (url === prefix || url.startsWith(`${prefix}/`)) {
+      matched = mapping
+      matchedLength = prefix.length
+    }
+  })
+
+  return matched
 }
 
 /**
@@ -170,9 +233,10 @@ function isModuleEnabled(
   adminConfig: SidebarModulesAdminConfig,
   userConfig: SidebarModulesUserConfig
 ): boolean {
-  const mapping = URL_TO_CONFIG_MAP[url]
+  const mapping = findConfigMapping(url)
   if (!mapping) {
-    // No mapping config, default to visible (e.g. system settings and new features)
+    // No mapping config, default to visible (new features stay visible
+    // until they are explicitly mapped)
     return true
   }
 

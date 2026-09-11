@@ -33,7 +33,10 @@ import {
 } from '@/components/ui/command'
 import { useSearch } from '@/context/search-provider'
 import { useTheme } from '@/context/theme-provider'
+import { useSidebarConfig } from '@/hooks/use-sidebar-config'
 import { useSidebarData } from '@/hooks/use-sidebar-data'
+import { ROLE } from '@/lib/roles'
+import { useAuthStore } from '@/stores/auth-store'
 
 import { getNavGroupsForPath } from './layout/lib/sidebar-view-registry'
 import { ScrollArea } from './ui/scroll-area'
@@ -45,10 +48,27 @@ export function CommandMenu() {
   const { open, setOpen } = useSearch()
   const { pathname } = useLocation()
   const sidebarData = useSidebarData()
+  const userRole = useAuthStore((s) => s.auth.user?.role) ?? ROLE.GUEST
 
-  // Use the active nested sidebar view's nav groups when one matches
-  // the current URL; otherwise fall back to the root navigation.
-  const navGroups = getNavGroupsForPath(pathname, t) ?? sidebarData.navGroups
+  // Use the active nested sidebar view's nav groups when one matches the
+  // current URL, otherwise fall back to the root navigation. Role gating is
+  // applied here just like in `useSidebarView`, so the palette never offers
+  // an entry the user cannot actually reach.
+  const roleFilteredNavGroups = React.useMemo(
+    () =>
+      (getNavGroupsForPath(pathname, t, userRole) ?? sidebarData.navGroups)
+        .map((group) => ({
+          ...group,
+          items: group.items.filter(
+            (item) =>
+              item.requiredRole === undefined || userRole >= item.requiredRole
+          ),
+        }))
+        .filter((group) => group.items.length > 0),
+    [pathname, t, sidebarData.navGroups, userRole]
+  )
+
+  const navGroups = useSidebarConfig(roleFilteredNavGroups)
 
   const runCommand = React.useCallback(
     (command: () => unknown) => {

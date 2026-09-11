@@ -54,10 +54,9 @@ export const HEADER_NAV_DEFAULT: HeaderNavModulesConfig = {
 }
 
 export const SIDEBAR_MODULES_DEFAULT: SidebarModulesAdminConfig = {
-  chat: {
+  playground: {
     enabled: true,
     playground: true,
-    chat: true,
   },
   console: {
     enabled: true,
@@ -72,14 +71,23 @@ export const SIDEBAR_MODULES_DEFAULT: SidebarModulesAdminConfig = {
     topup: true,
     personal: true,
   },
-  admin: {
+  business: {
     enabled: true,
-    channel: true,
+    channels: true,
     models: true,
-    redemption: true,
-    user: true,
-    setting: true,
-    subscription: true,
+    users: true,
+    billing: true,
+    site: true,
+    content: true,
+    policies: true,
+  },
+  system: {
+    enabled: true,
+    runtime: true,
+    auth: true,
+    security: true,
+    routing: true,
+    operations: true,
   },
 }
 
@@ -194,7 +202,12 @@ export function parseSidebarModulesAdmin(
     Object.entries(parsed).forEach(([sectionKey, raw]) => {
       if (!raw || typeof raw !== 'object') return
 
-      const defaultSection = defaults[sectionKey] ?? { enabled: true }
+      // Sections missing from the schema (for example the retired `chat`
+      // and `admin` groups) are dropped outright: keeping them would
+      // resurface toggles that no longer control anything.
+      const defaultSection = defaults[sectionKey]
+      if (!defaultSection) return
+
       const sectionConfig: SidebarSectionConfig = {
         enabled: toBoolean(
           (raw as Record<string, unknown>).enabled,
@@ -205,6 +218,12 @@ export function parseSidebarModulesAdmin(
       Object.entries(raw as Record<string, unknown>).forEach(
         ([moduleKey, moduleValue]) => {
           if (moduleKey === 'enabled') return
+          // Modules missing from the schema are dropped for the same reason
+          // sections are: after channels and models moved to the business
+          // section, a stored `system.channels` would otherwise render a
+          // switch that controls nothing. Dropping it here also cleans it
+          // out of the stored option the next time the form is saved.
+          if (!(moduleKey in defaultSection)) return
           sectionConfig[moduleKey] = toBoolean(
             moduleValue,
             defaultSection[moduleKey] ?? true

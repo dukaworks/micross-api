@@ -17,32 +17,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { type TFunction } from 'i18next'
-import {
-  Box,
-  CreditCard,
-  Layout,
-  Settings,
-  Shield,
-  ShieldAlert,
-  Wrench,
-} from 'lucide-react'
+import { Box, ServerCog, Shield, Wrench } from 'lucide-react'
 
 import { getAuthSectionNavItems } from '@/features/system-settings/auth/section-registry.tsx'
-import { getBillingSectionNavItems } from '@/features/system-settings/billing/section-registry.tsx'
-import { getContentSectionNavItems } from '@/features/system-settings/content/section-registry.tsx'
 import { getModelsSectionNavItems } from '@/features/system-settings/models/section-registry.tsx'
 import { getOperationsSectionNavItems } from '@/features/system-settings/operations/section-registry.tsx'
 import { getSecuritySectionNavItems } from '@/features/system-settings/security/section-registry.tsx'
-import { getSiteSectionNavItems } from '@/features/system-settings/site/section-registry.tsx'
+import { ROLE } from '@/lib/roles'
 
 import type { NavGroup, SidebarView } from '../types'
 
 /**
- * Sidebar nav groups for the System Settings nested view.
+ * Sidebar nav groups for the System Management nested view.
  *
- * Kept as a single group because the workspace title in the sidebar
- * header already provides top-level context — the inner group label
- * scopes the items as "administration" actions.
+ * Scope rule: everything here decides how the gateway *connects, routes,
+ * protects and operates* — i.e. changes that can take the service down.
+ * Business-facing configuration (pricing, payment, site branding, console
+ * content, access policy) lives in the Business Management view instead,
+ * including upstream supply: channels and the model catalog are commercial
+ * assets guarded by the `admin` role, so they live there.
  */
 function getSystemSettingsNavGroups(t: TFunction): NavGroup[] {
   return [
@@ -51,34 +44,22 @@ function getSystemSettingsNavGroups(t: TFunction): NavGroup[] {
       title: t('System Administration'),
       items: [
         {
-          title: t('Site & Branding'),
-          icon: Settings,
-          items: getSiteSectionNavItems(t),
+          title: t('Runtime & Access'),
+          icon: ServerCog,
+          items: [{ title: t('Runtime Status'), url: '/system-info' }],
         },
         {
-          title: t('Authentication'),
+          title: t('Authentication & Security'),
           icon: Shield,
-          items: getAuthSectionNavItems(t),
-        },
-        {
-          title: t('Billing & Payment'),
-          icon: CreditCard,
-          items: getBillingSectionNavItems(t),
+          items: [
+            ...getAuthSectionNavItems(t),
+            ...getSecuritySectionNavItems(t),
+          ],
         },
         {
           title: t('Models & Routing'),
           icon: Box,
           items: getModelsSectionNavItems(t),
-        },
-        {
-          title: t('Security & Limits'),
-          icon: ShieldAlert,
-          items: getSecuritySectionNavItems(t),
-        },
-        {
-          title: t('Console Content'),
-          icon: Layout,
-          items: getContentSectionNavItems(t),
         },
         {
           title: t('Operations'),
@@ -91,15 +72,22 @@ function getSystemSettingsNavGroups(t: TFunction): NavGroup[] {
 }
 
 /**
- * Nested sidebar view for `/system-settings/*`.
+ * Nested sidebar view for `/system-settings/*` and the standalone runtime
+ * status page (`/system-info`).
  *
  * Activates the Vercel / Cloudflare-style drill-in sidebar:
  * the root navigation is replaced by the system administration
  * groups, with a "Back to Dashboard" affordance in the header.
+ *
+ * Every entry here is `super_admin` territory, and so is the workspace
+ * itself (`requiredRole` below) — an administrator below that threshold
+ * keeps the root navigation rather than seeing entries the route guards
+ * would reject.
  */
 export const SYSTEM_SETTINGS_VIEW: SidebarView = {
   id: 'system-settings',
-  pathPattern: /^\/system-settings(\/|$)/,
+  pathPattern: /^\/(system-settings|system-info)(\/|$)/,
+  requiredRole: ROLE.SUPER_ADMIN,
   parent: {
     to: '/dashboard/overview',
     label: 'Back to Dashboard',

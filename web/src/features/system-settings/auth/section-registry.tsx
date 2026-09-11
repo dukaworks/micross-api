@@ -18,30 +18,18 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import type { AuthSettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
-import { BasicAuthSection } from './basic-auth-section'
 import { BotProtectionSection } from './bot-protection-section'
 import { CustomOAuthSection } from './custom-oauth/custom-oauth-section'
 import { OAuthSection } from './oauth-section'
 import { PasskeySection } from './passkey-section'
 
+/**
+ * 认证集成配置组（系统管理）。
+ *
+ * 注册开关与邮箱白名单属于业务准入策略，已迁移到
+ * `system-settings/policies`，见 `/business-settings/policies/registration`。
+ */
 const AUTH_SECTIONS = [
-  {
-    id: 'basic-auth',
-    titleKey: 'Basic Authentication',
-    build: (settings: AuthSettings) => (
-      <BasicAuthSection
-        defaultValues={{
-          PasswordLoginEnabled: settings.PasswordLoginEnabled,
-          PasswordRegisterEnabled: settings.PasswordRegisterEnabled,
-          EmailVerificationEnabled: settings.EmailVerificationEnabled,
-          RegisterEnabled: settings.RegisterEnabled,
-          EmailDomainRestrictionEnabled: settings.EmailDomainRestrictionEnabled,
-          EmailAliasRestrictionEnabled: settings.EmailAliasRestrictionEnabled,
-          EmailDomainWhitelist: settings.EmailDomainWhitelist,
-        }}
-      />
-    ),
-  },
   {
     id: 'oauth',
     titleKey: 'OAuth Integrations',
@@ -127,7 +115,7 @@ export type AuthSectionId = (typeof AUTH_SECTIONS)[number]['id']
 
 const authRegistry = createSectionRegistry<AuthSectionId, AuthSettings>({
   sections: AUTH_SECTIONS,
-  defaultSection: 'basic-auth',
+  defaultSection: 'oauth',
   basePath: '/system-settings/auth',
   urlStyle: 'path',
 })
