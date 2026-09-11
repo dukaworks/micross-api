@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Loader2, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -25,6 +25,7 @@ import {
   DataTableView,
   useDataTable,
 } from '@/components/data-table'
+import { LoadingState } from '@/components/loading-state'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -235,12 +236,10 @@ export function UpstreamRatioSyncTable({
   if (dataSource.length === 0) {
     if (isSyncing) {
       return (
-        <div className='flex h-64 flex-col items-center justify-center gap-3 rounded-md border'>
-          <Loader2 className='text-muted-foreground h-8 w-8 animate-spin' />
-          <p className='text-muted-foreground text-sm'>
-            {t('Fetching upstream prices...')}
-          </p>
-        </div>
+        <LoadingState
+          message={t('Fetching upstream prices...')}
+          className='rounded-md border'
+        />
       )
     }
 

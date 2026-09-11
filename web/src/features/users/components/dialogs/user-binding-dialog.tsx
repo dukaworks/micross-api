@@ -23,7 +23,6 @@ import {
   Send,
   Link2,
   Unlink,
-  Loader2,
   Eye,
   EyeOff,
 } from 'lucide-react'
@@ -34,6 +33,7 @@ import { toast } from 'sonner'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -329,9 +329,7 @@ export function UserBindingDialog(props: Props) {
         bodyClassName='space-y-4'
       >
         {loading ? (
-          <div className='flex items-center justify-center py-8'>
-            <Loader2 className='text-muted-foreground h-6 w-6 animate-spin' />
-          </div>
+          <LoadingState size='sm' />
         ) : (
           <div className='space-y-3'>
             <div className='flex items-center justify-between'>

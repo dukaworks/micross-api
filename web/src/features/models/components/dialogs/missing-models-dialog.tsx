@@ -17,11 +17,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useQuery } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, Loader2, Plus, Search } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -127,9 +128,7 @@ export function MissingModelsDialog({
       initialFocus={!isMobile}
     >
       {isLoading ? (
-        <div className='flex items-center justify-center py-12'>
-          <Loader2 className='h-8 w-8 animate-spin' />
-        </div>
+        <LoadingState size='sm' />
       ) : missingModels.length === 0 ? (
         <div className='text-muted-foreground py-12 text-center'>
           <p>{t('No missing models found.')}</p>

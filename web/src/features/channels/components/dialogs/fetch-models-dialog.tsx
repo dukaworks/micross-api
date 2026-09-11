@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -377,11 +378,7 @@ export function FetchModelsDialog({
       </div>
     )
   } else if (isFetching) {
-    dialogBody = (
-      <div className='flex items-center justify-center py-12'>
-        <Loader2 className='text-muted-foreground h-8 w-8 animate-spin' />
-      </div>
-    )
+    dialogBody = <LoadingState size='sm' />
   } else if (fetchedModels.length === 0 && removedModels.length === 0) {
     dialogBody = (
       <div className='text-muted-foreground py-8 text-center'>

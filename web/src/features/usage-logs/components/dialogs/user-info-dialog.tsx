@@ -16,12 +16,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { Label } from '@/components/ui/label'
 import { formatQuota, formatCompactNumber } from '@/lib/format'
 
@@ -96,9 +96,7 @@ export function UserInfoDialog({
       bodyClassName='space-y-4'
     >
       {isLoading ? (
-        <div className='flex items-center justify-center py-8'>
-          <Loader2 className='text-muted-foreground size-6 animate-spin' />
-        </div>
+        <LoadingState size='sm' />
       ) : userInfo ? (
         <div className='space-y-4 py-4'>
           {/* Basic Info */}

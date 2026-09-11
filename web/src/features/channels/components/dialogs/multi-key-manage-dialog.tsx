@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useQueryClient } from '@tanstack/react-query'
-import { Loader2, RefreshCw, Trash2, Power, PowerOff } from 'lucide-react'
+import { RefreshCw, Trash2, Power, PowerOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -25,6 +25,7 @@ import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { StaticDataTable } from '@/components/data-table'
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -379,9 +380,7 @@ export function MultiKeyManageDialog({
           {/* Table */}
           <div className='min-h-0 flex-1 overflow-auto rounded-md border'>
             {isLoading ? (
-              <div className='flex items-center justify-center py-12'>
-                <Loader2 className='text-muted-foreground h-8 w-8 animate-spin' />
-              </div>
+              <LoadingState size='sm' />
             ) : keys.length === 0 ? (
               <div className='text-muted-foreground py-12 text-center'>
                 {t('No keys found')}

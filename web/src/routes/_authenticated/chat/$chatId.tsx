@@ -17,10 +17,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Link, createFileRoute, redirect } from '@tanstack/react-router'
-import { Loader2, MessageCircleWarning } from 'lucide-react'
+import { MessageCircleWarning } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { LoadingState } from '@/components/loading-state'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { useActiveChatKey } from '@/features/chat/hooks/use-active-chat-key'
@@ -114,11 +115,8 @@ function ChatRouteComponent() {
 
   if (requiresActiveKey && isPending) {
     return (
-      <div className='flex h-full flex-col items-center justify-center gap-4'>
-        <Loader2 className='text-muted-foreground h-8 w-8 animate-spin' />
-        <p className='text-muted-foreground text-sm'>
-          {t('Preparing your chat link…')}
-        </p>
+      <div className='flex h-full flex-col'>
+        <LoadingState message={t('Preparing your chat link…')} size='lg' />
       </div>
     )
   }

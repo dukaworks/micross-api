@@ -24,6 +24,7 @@ import { toast } from 'sonner'
 
 import { CopyButton } from '@/components/copy-button'
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -178,12 +179,7 @@ export function TwoFASetupDialog({
     >
       <div className='space-y-4 py-4'>
         {initializing ? (
-          <div className='flex flex-col items-center justify-center gap-3 py-8'>
-            <div className='border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent' />
-            <div className='text-muted-foreground text-sm'>
-              {t('Setting up 2FA...')}
-            </div>
-          </div>
+          <LoadingState message={t('Setting up 2FA...')} size='sm' />
         ) : !setupData ? (
           <div className='flex justify-center py-8'>
             <div className='text-muted-foreground'>

@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckSquare, RefreshCcw } from 'lucide-react'
+import { CheckSquare, Loader2, RefreshCcw } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -488,7 +488,7 @@ export function UpstreamRatioSync({ modelRatios }: UpstreamRatioSyncProps) {
             disabled={!hasSelections || isLoading}
           >
             {(isSyncPending || confirmLoading) && (
-              <span className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
             )}
             <CheckSquare className='mr-2 h-4 w-4' />
             {t('Apply Sync')}

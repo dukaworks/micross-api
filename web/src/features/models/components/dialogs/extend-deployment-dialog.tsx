@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Dialog } from '@/components/dialog'
+import { LoadingState } from '@/components/loading-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -183,9 +184,7 @@ export function ExtendDeploymentDialog({
       }
     >
       {isLoadingDetails ? (
-        <div className='flex items-center justify-center py-10'>
-          <Loader2 className='text-muted-foreground h-6 w-6 animate-spin' />
-        </div>
+        <LoadingState size='sm' />
       ) : (
         <div className='space-y-4'>
           <div className='text-muted-foreground text-sm'>
