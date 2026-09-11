@@ -22,6 +22,7 @@ import { BotProtectionSection } from './bot-protection-section'
 import { CustomOAuthSection } from './custom-oauth/custom-oauth-section'
 import { OAuthSection } from './oauth-section'
 import { PasskeySection } from './passkey-section'
+import { AppWindow, Bot, KeyRound, LogIn } from 'lucide-react'
 
 /**
  * 认证集成配置组（系统管理）。
@@ -33,6 +34,7 @@ const AUTH_SECTIONS = [
   {
     id: 'oauth',
     titleKey: 'OAuth Integrations',
+    icon: LogIn,
     build: (settings: AuthSettings) => (
       <OAuthSection
         serverAddress={settings.ServerAddress}
@@ -70,6 +72,7 @@ const AUTH_SECTIONS = [
   {
     id: 'passkey',
     titleKey: 'Passkey Authentication',
+    icon: KeyRound,
     build: (settings: AuthSettings) => (
       <PasskeySection
         defaultValues={{
@@ -92,6 +95,7 @@ const AUTH_SECTIONS = [
   {
     id: 'bot-protection',
     titleKey: 'Bot Protection',
+    icon: Bot,
     build: (settings: AuthSettings) => (
       <BotProtectionSection
         defaultValues={{
@@ -105,6 +109,7 @@ const AUTH_SECTIONS = [
   {
     id: 'custom-oauth',
     titleKey: 'Custom OAuth',
+    icon: AppWindow,
     build: (settings: AuthSettings) => (
       <CustomOAuthSection serverAddress={settings.ServerAddress} />
     ),

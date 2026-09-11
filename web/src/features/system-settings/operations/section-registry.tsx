@@ -25,11 +25,13 @@ import { PerformanceSection } from '../maintenance/performance-section'
 import { UpdateCheckerSection } from '../maintenance/update-checker-section'
 import type { OperationsSettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
+import { Bell, Cog, Download, FileText, Gauge, HardDrive, Mail } from 'lucide-react'
 
 const OPERATIONS_SECTIONS = [
   {
     id: 'behavior',
     titleKey: 'System Behavior',
+    icon: Cog,
     build: (settings: OperationsSettings) => (
       <SystemBehaviorSection
         defaultValues={{
@@ -43,6 +45,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'alerts',
     titleKey: 'Monitoring & Alerts',
+    icon: Bell,
     build: (settings: OperationsSettings) => (
       <MonitoringSettingsSection
         defaultValues={{
@@ -62,6 +65,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'email',
     titleKey: 'SMTP Email',
+    icon: Mail,
     build: (settings: OperationsSettings) => (
       <EmailSettingsSection
         defaultValues={{
@@ -81,6 +85,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'worker',
     titleKey: 'Worker Proxy',
+    icon: HardDrive,
     build: (settings: OperationsSettings) => (
       <WorkerSettingsSection
         defaultValues={{
@@ -95,6 +100,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'logs',
     titleKey: 'Log Maintenance',
+    icon: FileText,
     build: (settings: OperationsSettings) => (
       <LogSettingsSection
         defaultEnabled={Boolean(settings.LogConsumeEnabled)}
@@ -104,6 +110,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'performance',
     titleKey: 'Performance',
+    icon: Gauge,
     build: (settings: OperationsSettings) => (
       <PerformanceSection
         defaultValues={{
@@ -130,6 +137,7 @@ const OPERATIONS_SECTIONS = [
   {
     id: 'update-checker',
     titleKey: 'Version & Updates',
+    icon: Download,
     build: (
       _settings: OperationsSettings,
       currentVersion?: string | null,

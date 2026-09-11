@@ -18,11 +18,15 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { type TFunction } from 'i18next'
 import {
+  Boxes,
+  CalendarDays,
   CreditCard,
   Layout,
   Plug,
+  Server,
   Settings,
   ShieldAlert,
+  TicketPercent,
   Users,
 } from 'lucide-react'
 
@@ -55,10 +59,11 @@ function getBusinessSettingsNavGroups(t: TFunction): NavGroup[] {
           title: t('Upstream Providers'),
           icon: Plug,
           items: [
-            { title: t('Channels'), url: '/channels' },
+            { title: t('Channels'), url: '/channels', icon: Server },
             {
               title: t('Models'),
               url: '/models/metadata',
+              icon: Boxes,
               activeUrls: ['/models/deployments'],
               configUrls: ['/models/metadata', '/models/deployments'],
             },
@@ -68,9 +73,17 @@ function getBusinessSettingsNavGroups(t: TFunction): NavGroup[] {
           title: t('User Management'),
           icon: Users,
           items: [
-            { title: t('Users'), url: '/users' },
-            { title: t('Redemption Codes'), url: '/redemption-codes' },
-            { title: t('Subscriptions'), url: '/subscriptions' },
+            { title: t('Users'), url: '/users', icon: Users },
+            {
+              title: t('Redemption Codes'),
+              url: '/redemption-codes',
+              icon: TicketPercent,
+            },
+            {
+              title: t('Subscriptions'),
+              url: '/subscriptions',
+              icon: CalendarDays,
+            },
           ],
         },
         {

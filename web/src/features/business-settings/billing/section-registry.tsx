@@ -16,6 +16,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import {
+  Banknote,
+  CalendarCheck,
+  Calculator,
+  CreditCard,
+  Users,
+  Wallet,
+} from 'lucide-react'
 import { parseCurrencyDisplayType } from '@/lib/currency'
 
 import { CheckinSettingsSection } from './sections/checkin-settings-section'
@@ -56,6 +64,7 @@ const BILLING_SECTIONS = [
   {
     id: 'quota',
     titleKey: 'Quota Settings',
+    icon: Wallet,
     build: (settings: BillingSettings) => (
       <QuotaSettingsSection
         defaultValues={{
@@ -79,6 +88,7 @@ const BILLING_SECTIONS = [
   {
     id: 'currency',
     titleKey: 'Currency & Display',
+    icon: Banknote,
     build: (settings: BillingSettings) => (
       <PricingSection
         defaultValues={{
@@ -102,6 +112,7 @@ const BILLING_SECTIONS = [
   {
     id: 'model-pricing',
     titleKey: 'Model Pricing',
+    icon: Calculator,
     build: (settings: BillingSettings) => (
       <RatioSettingsCard
         titleKey='Model Pricing'
@@ -115,6 +126,7 @@ const BILLING_SECTIONS = [
   {
     id: 'group-pricing',
     titleKey: 'Group Pricing',
+    icon: Users,
     build: (settings: BillingSettings) => (
       <RatioSettingsCard
         titleKey='Group Pricing'
@@ -128,6 +140,7 @@ const BILLING_SECTIONS = [
   {
     id: 'payment',
     titleKey: 'Payment Gateway',
+    icon: CreditCard,
     build: (settings: BillingSettings) => (
       <PaymentSettingsSection
         defaultValues={{
@@ -188,6 +201,7 @@ const BILLING_SECTIONS = [
   {
     id: 'checkin',
     titleKey: 'Check-in Rewards',
+    icon: CalendarCheck,
     build: (settings: BillingSettings) => (
       <CheckinSettingsSection
         defaultValues={{

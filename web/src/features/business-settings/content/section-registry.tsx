@@ -18,6 +18,15 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import type { ContentSettings } from '@/features/system-settings/types'
 import { createSectionRegistry } from '@/features/system-settings/utils/section-registry'
+import {
+  Activity,
+  CircleHelp,
+  Image,
+  LayoutDashboard,
+  Link,
+  Megaphone,
+  MessageSquare,
+} from 'lucide-react'
 import { AnnouncementsSection } from './announcements-section'
 import { ApiInfoSection } from './api-info-section'
 import { ChatSettingsSection } from './chat-settings-section'
@@ -41,6 +50,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'dashboard',
     titleKey: 'Data Dashboard',
+    icon: LayoutDashboard,
     build: (settings: ContentSettings) => (
       <DashboardSection
         defaultValues={{
@@ -56,6 +66,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'announcements',
     titleKey: 'Announcements',
+    icon: Megaphone,
     build: (settings: ContentSettings) => (
       <AnnouncementsSection
         enabled={settings['console_setting.announcements_enabled']}
@@ -66,6 +77,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'api-info',
     titleKey: 'API Addresses',
+    icon: Link,
     build: (settings: ContentSettings) => (
       <ApiInfoSection
         enabled={settings['console_setting.api_info_enabled']}
@@ -76,6 +88,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'faq',
     titleKey: 'FAQ',
+    icon: CircleHelp,
     build: (settings: ContentSettings) => (
       <FAQSection
         enabled={settings['console_setting.faq_enabled']}
@@ -86,6 +99,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'uptime-kuma',
     titleKey: 'Uptime Kuma',
+    icon: Activity,
     build: (settings: ContentSettings) => (
       <UptimeKumaSection
         enabled={settings['console_setting.uptime_kuma_enabled']}
@@ -96,6 +110,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'chat',
     titleKey: 'Chat Presets',
+    icon: MessageSquare,
     build: (settings: ContentSettings) => (
       <ChatSettingsSection defaultValue={settings.Chats} />
     ),
@@ -103,6 +118,7 @@ const CONTENT_SECTIONS = [
   {
     id: 'drawing',
     titleKey: 'Drawing',
+    icon: Image,
     build: (settings: ContentSettings) => (
       <DrawingSettingsSection
         defaultValues={{

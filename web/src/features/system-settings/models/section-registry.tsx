@@ -25,6 +25,15 @@ import { GeminiSettingsCard } from './gemini-settings-card'
 import { GlobalSettingsCard } from './global-settings-card'
 import { GrokSettingsCard } from './grok-settings-card'
 import { RoutingReliabilitySection } from './routing-reliability-section'
+import {
+  Magnet,
+  MessageCircle,
+  Rocket,
+  Route,
+  Settings2,
+  Sparkles,
+  Zap,
+} from 'lucide-react'
 
 function formatJsonForEditor(value: string, fallback: string) {
   const raw = (value ?? '').toString().trim()
@@ -40,6 +49,7 @@ const MODELS_SECTIONS = [
   {
     id: 'global',
     titleKey: 'Global Model Configuration',
+    icon: Settings2,
     build: (settings: ModelSettings) => (
       <GlobalSettingsCard
         defaultValues={{
@@ -68,6 +78,7 @@ const MODELS_SECTIONS = [
   {
     id: 'routing-reliability',
     titleKey: 'Routing Reliability',
+    icon: Route,
     build: (settings: ModelSettings) => (
       <RoutingReliabilitySection
         defaultValues={{
@@ -94,6 +105,7 @@ const MODELS_SECTIONS = [
   {
     id: 'gemini',
     titleKey: 'Gemini',
+    icon: Sparkles,
     build: (settings: ModelSettings) => (
       <GeminiSettingsCard
         defaultValues={{
@@ -118,6 +130,7 @@ const MODELS_SECTIONS = [
   {
     id: 'claude',
     titleKey: 'Claude',
+    icon: MessageCircle,
     build: (settings: ModelSettings) => (
       <ClaudeSettingsCard
         defaultValues={{
@@ -136,6 +149,7 @@ const MODELS_SECTIONS = [
   {
     id: 'grok',
     titleKey: 'Grok',
+    icon: Zap,
     build: (settings: ModelSettings) => (
       <GrokSettingsCard
         defaultValues={{
@@ -150,6 +164,7 @@ const MODELS_SECTIONS = [
   {
     id: 'channel-affinity',
     titleKey: 'Channel Affinity',
+    icon: Magnet,
     build: (settings: ModelSettings) => (
       <ChannelAffinitySection
         defaultValues={{
@@ -172,6 +187,7 @@ const MODELS_SECTIONS = [
   {
     id: 'model-deployment',
     titleKey: 'Model Deployment',
+    icon: Rocket,
     build: (settings: ModelSettings) => (
       <IoNetDeploymentSettingsSection
         defaultValues={{

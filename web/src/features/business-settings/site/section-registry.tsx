@@ -29,11 +29,13 @@ import { NoticeSection } from './sections/notice-section'
 import { SidebarModulesSection } from './sections/sidebar-modules-section'
 import type { SiteSettings } from '@/features/system-settings/types'
 import { createSectionRegistry } from '@/features/system-settings/utils/section-registry'
+import { Bell, BookOpen, Info, LayoutTemplate, Menu } from 'lucide-react'
 
 const SITE_SECTIONS = [
   {
     id: 'system-info',
     titleKey: 'Site Information',
+    icon: Info,
     build: (settings: SiteSettings) => (
       <SystemInfoSection
         defaultValues={{
@@ -55,6 +57,7 @@ const SITE_SECTIONS = [
   {
     id: 'notice',
     titleKey: 'System Notice',
+    icon: Bell,
     build: (settings: SiteSettings) => (
       <NoticeSection defaultValue={settings.Notice ?? ''} />
     ),
@@ -62,6 +65,7 @@ const SITE_SECTIONS = [
   {
     id: 'header-navigation',
     titleKey: 'Header navigation',
+    icon: Menu,
     build: (settings: SiteSettings) => {
       const headerNavConfig = parseHeaderNavModules(settings.HeaderNavModules)
       const headerNavSerialized = serializeHeaderNavModules(headerNavConfig)
@@ -76,6 +80,7 @@ const SITE_SECTIONS = [
   {
     id: 'docs-link',
     titleKey: 'Documentation Link',
+    icon: BookOpen,
     build: (settings: SiteSettings) => (
       <DocsLinkSection
         defaultValue={settings['general_setting.docs_link'] ?? ''}
@@ -85,6 +90,7 @@ const SITE_SECTIONS = [
   {
     id: 'sidebar-modules',
     titleKey: 'Sidebar modules',
+    icon: LayoutTemplate,
     build: (settings: SiteSettings) => {
       const sidebarConfig = parseSidebarModulesAdmin(
         settings.SidebarModulesAdmin

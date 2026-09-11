@@ -20,6 +20,7 @@ import { BasicAuthSection } from './sections/basic-auth-section'
 import { RateLimitSection } from './sections/rate-limit-section'
 import { TokenLimitSection } from './sections/token-limit-section'
 import { createSectionRegistry } from '@/features/system-settings/utils/section-registry'
+import { Gauge, KeyRound, UserPlus } from 'lucide-react'
 
 /**
  * 「业务策略」配置组的字段集合。
@@ -49,6 +50,7 @@ const POLICIES_SECTIONS = [
   {
     id: 'registration',
     titleKey: 'Registration & Access',
+    icon: UserPlus,
     build: (settings: PolicySettings) => (
       <BasicAuthSection
         defaultValues={{
@@ -66,6 +68,7 @@ const POLICIES_SECTIONS = [
   {
     id: 'rate-limit',
     titleKey: 'Rate Limiting',
+    icon: Gauge,
     build: (settings: PolicySettings) => (
       <RateLimitSection
         defaultValues={{
@@ -83,6 +86,7 @@ const POLICIES_SECTIONS = [
   {
     id: 'token-limits',
     titleKey: 'Token Limits',
+    icon: KeyRound,
     build: (settings: PolicySettings) => (
       <TokenLimitSection
         defaultValues={{

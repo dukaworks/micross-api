@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { type TFunction } from 'i18next'
-import { Box, ServerCog, Shield, Wrench } from 'lucide-react'
+import { Activity, Box, ServerCog, Shield, Wrench } from 'lucide-react'
 
 import { getAuthSectionNavItems } from '@/features/system-settings/auth/section-registry.tsx'
 import { getModelsSectionNavItems } from '@/features/system-settings/models/section-registry.tsx'
@@ -46,7 +46,9 @@ function getSystemSettingsNavGroups(t: TFunction): NavGroup[] {
         {
           title: t('Runtime & Access'),
           icon: ServerCog,
-          items: [{ title: t('Runtime Status'), url: '/system-info' }],
+          items: [
+            { title: t('Runtime Status'), url: '/system-info', icon: Activity },
+          ],
         },
         {
           title: t('Authentication & Security'),

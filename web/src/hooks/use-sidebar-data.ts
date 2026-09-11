@@ -153,14 +153,14 @@ export function useSidebarData(): SidebarData {
         items: [
           {
             title: t('Business Management'),
-            url: '/business-settings/billing/quota',
+            url: '/channels',
             configUrls: ['/business-settings'],
             icon: Briefcase,
             requiredRole: ROLE.ADMIN,
           },
           {
             title: t('System Management'),
-            url: '/system-settings/auth/oauth',
+            url: '/system-info',
             configUrls: ['/system-settings'],
             icon: Settings,
             requiredRole: ROLE.SUPER_ADMIN,

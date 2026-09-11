@@ -20,6 +20,7 @@ import { SensitiveWordsSection } from '../request-limits/sensitive-words-section
 import { SSRFSection } from '../request-limits/ssrf-section'
 import type { SecuritySettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
+import { ShieldAlert, ShieldBan } from 'lucide-react'
 
 /**
  * 安全防护配置组（系统管理）。
@@ -32,6 +33,7 @@ const SECURITY_SECTIONS = [
   {
     id: 'sensitive-words',
     titleKey: 'Sensitive Words',
+    icon: ShieldAlert,
     build: (settings: SecuritySettings) => (
       <SensitiveWordsSection
         defaultValues={{
@@ -45,6 +47,7 @@ const SECURITY_SECTIONS = [
   {
     id: 'ssrf',
     titleKey: 'SSRF Protection',
+    icon: ShieldBan,
     build: (settings: SecuritySettings) => (
       <SSRFSection
         defaultValues={{
