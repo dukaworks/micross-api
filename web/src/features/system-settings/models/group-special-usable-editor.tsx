@@ -26,6 +26,7 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { EmptyState } from '@/components/empty-state'
 import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -417,9 +418,10 @@ export function GroupSpecialUsableRulesEditor(
       <CardContent>
         <div className='space-y-3'>
           {grouped.length === 0 ? (
-            <p className='text-muted-foreground py-4 text-center text-sm'>
-              {t('No rules yet. Add a group below to get started.')}
-            </p>
+            <EmptyState
+              title={t('No rules yet. Add a group below to get started.')}
+              size='sm'
+            />
           ) : (
             grouped.map((group) => (
               <GroupSection

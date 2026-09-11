@@ -29,6 +29,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { EmptyState } from '@/components/empty-state'
 import { ErrorState } from '@/components/error-state'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -599,17 +600,11 @@ export function SystemInstancesPanel() {
     )
   } else if (instances.length === 0) {
     instancesContent = (
-      <div className='px-4 py-10 text-center sm:px-5'>
-        <div className='bg-muted mx-auto mb-3 flex size-10 items-center justify-center rounded-lg'>
-          <ServerCog
-            className='text-muted-foreground size-5'
-            aria-hidden='true'
-          />
-        </div>
-        <p className='text-muted-foreground text-sm'>
-          {t('No instances have reported yet.')}
-        </p>
-      </div>
+      <EmptyState
+        icon={ServerCog}
+        title={t('No instances have reported yet.')}
+        size='sm'
+      />
     )
   } else {
     instancesContent = (

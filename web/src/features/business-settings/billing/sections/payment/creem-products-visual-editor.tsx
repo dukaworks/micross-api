@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 
 import { StaticDataTable } from '@/components/data-table/static/static-data-table'
 import { StaticRowActions } from '@/components/data-table/static/static-row-actions'
+import { EmptyState } from '@/components/empty-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -171,11 +172,17 @@ export function CreemProductsVisualEditor({
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className='text-muted-foreground rounded-lg border border-dashed p-8 text-center text-sm'>
-          {searchText
-            ? t('No products match your search')
-            : t('No products configured. Click "Add product" to get started.')}
-        </div>
+        <EmptyState
+          title={
+            searchText
+              ? t('No products match your search')
+              : t(
+                  'No products configured. Click "Add product" to get started.'
+                )
+          }
+          className='rounded-lg border border-dashed'
+          size='sm'
+        />
       ) : (
         <div className='rounded-md border'>
           {/* Desktop table view */}

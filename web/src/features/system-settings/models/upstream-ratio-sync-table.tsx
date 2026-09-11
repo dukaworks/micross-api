@@ -25,6 +25,7 @@ import {
   DataTableView,
   useDataTable,
 } from '@/components/data-table'
+import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { Input } from '@/components/ui/input'
 import {
@@ -244,16 +245,12 @@ export function UpstreamRatioSyncTable({
     }
 
     return (
-      <div className='flex h-64 items-center justify-center rounded-md border'>
-        <div className='text-center'>
-          <p className='text-muted-foreground text-sm'>
-            {t('No upstream price differences found')}
-          </p>
-          <p className='text-muted-foreground mt-1 text-xs'>
-            {t('Select sync channels to compare prices')}
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        title={t('No upstream price differences found')}
+        description={t('Select sync channels to compare prices')}
+        className='rounded-md border'
+        size='sm'
+      />
     )
   }
 

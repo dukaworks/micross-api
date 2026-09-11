@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ListChecks, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { EmptyState } from '@/components/empty-state'
 import { ErrorState } from '@/components/error-state'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -305,17 +306,11 @@ export function SystemTasksPanel() {
             className='min-h-[260px]'
           />
         ) : tasks.length === 0 ? (
-          <div className='px-4 py-10 text-center sm:px-5'>
-            <div className='bg-muted mx-auto mb-3 flex size-10 items-center justify-center rounded-lg'>
-              <ListChecks
-                className='text-muted-foreground size-5'
-                aria-hidden='true'
-              />
-            </div>
-            <p className='text-muted-foreground text-sm'>
-              {t('No system tasks yet.')}
-            </p>
-          </div>
+          <EmptyState
+            icon={ListChecks}
+            title={t('No system tasks yet.')}
+            size='sm'
+          />
         ) : (
           <div className='space-y-4 p-4 sm:p-5'>
             <div>
@@ -331,9 +326,11 @@ export function SystemTasksPanel() {
               {activeTasks.length > 0 ? (
                 <SystemTasksTable tasks={activeTasks} />
               ) : (
-                <div className='text-muted-foreground rounded-md border border-dashed px-4 py-6 text-center text-sm'>
-                  {t('No active system tasks.')}
-                </div>
+                <EmptyState
+                  title={t('No active system tasks.')}
+                  className='rounded-md border border-dashed'
+                  size='sm'
+                />
               )}
             </div>
 
@@ -350,9 +347,11 @@ export function SystemTasksPanel() {
               {historyTasks.length > 0 ? (
                 <SystemTasksTable tasks={historyTasks} />
               ) : (
-                <div className='text-muted-foreground rounded-md border border-dashed px-4 py-6 text-center text-sm'>
-                  {t('No historical system tasks.')}
-                </div>
+                <EmptyState
+                  title={t('No historical system tasks.')}
+                  className='rounded-md border border-dashed'
+                  size='sm'
+                />
               )}
             </div>
           </div>
