@@ -40,9 +40,8 @@ import { isHttpUrl, isLikelyHtml } from '@/lib/content-format'
 
 import { getAboutContent } from './api'
 
-/** 蓝→紫品牌渐变文字。基线 A 的统一写法（token 化见 ui-consistency §七）。 */
-const GRADIENT_TEXT =
-  'bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'
+/** 蓝→紫品牌渐变文字。基线 A 的统一写法，唯一实现在 `styles/index.css` 的 `.brand-gradient-text`。 */
+const GRADIENT_TEXT = 'brand-gradient-text'
 
 /** 卡片色调：仅作图标底色与角部光晕，语义色取直觉关联。 */
 const TONES = {

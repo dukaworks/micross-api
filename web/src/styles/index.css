@@ -257,6 +257,43 @@ For commercial licensing, please contact support@quantumnous.com
   @apply after:pointer-events-none after:absolute after:start-0 after:bottom-0 after:hidden after:h-32 after:w-full after:rounded-b-2xl after:bg-[linear-gradient(180deg,_transparent_10%,_var(--background)_70%)] md:after:block;
 }
 
+/* ── Brand gradient & glow ──
+ * Baseline A's brand gradient. It was copy-pasted as a raw utility string into
+ * five call sites (hero / cta / promotions / how-it-works / about), so a theme
+ * preset swap could never follow it. Now the one definition lives here.
+ * See .docs/frontend/ui-consistency.md §2.1 and §7 batch 2.
+ */
+@utility brand-gradient-text {
+  @apply bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent;
+}
+
+/* Public-page header glow: three layered radial gradients masked to fade out
+ * below 40% height. The model square and rankings headers had this block
+ * duplicated verbatim, which is why it moved here. Values are intentionally
+ * literal and theme-independent — the equivalent `--chart-*` tokens are
+ * redefined under `dark`, which would have changed how these look.
+ */
+@utility brand-glow-page {
+  background-image:
+    radial-gradient(
+      ellipse 60% 50% at 20% 20%,
+      oklch(0.72 0.18 250 / 80%) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 80% 15%,
+      oklch(0.65 0.15 200 / 60%) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 40% 35% at 50% 70%,
+      oklch(0.7 0.12 280 / 40%) 0%,
+      transparent 70%
+    );
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
 .CollapsibleContent {
   overflow: hidden;
 }

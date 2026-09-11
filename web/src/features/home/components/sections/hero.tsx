@@ -189,7 +189,7 @@ export function Hero(props: HeroProps) {
                 >
                   {t('One API Gateway')}
                   <br />
-                  <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
+                  <span className='brand-gradient-text'>
                     {t('Every Model at Your Fingertips')}
                   </span>
                 </h1>

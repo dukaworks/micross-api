@@ -41,7 +41,7 @@ export function Promotions(_props: PromotionsProps) {
           </p>
           <h2 className='text-2xl leading-tight font-bold tracking-tight md:text-3xl'>
             {t('Flagship models,')}{' '}
-            <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
+            <span className='brand-gradient-text'>
               {t('limited-time discounts')}
             </span>
           </h2>
