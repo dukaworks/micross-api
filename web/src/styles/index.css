@@ -547,6 +547,27 @@ For commercial licensing, please contact support@quantumnous.com
   animation: landing-fade-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/*
+ * Cinematic reveal for the hero API console. Slower and softer than the copy
+ * entrances above, and meant to be paired with a long `animationDelay` so the
+ * console emerges from the backdrop a beat after everything else has settled
+ * instead of arriving on top of it.
+ */
+@keyframes landing-cinematic-emerge {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+.landing-animate-cinematic-emerge {
+  animation: landing-cinematic-emerge 1.8s cubic-bezier(0.32, 0.72, 0.24, 1)
+    both;
+}
+
 /* ---------------------------------------------------------------------------
  * Home hero scroll stage
  *
@@ -589,7 +610,8 @@ For commercial licensing, please contact support@quantumnous.com
   .landing-animate-fade-in,
   .landing-animate-scale-in,
   .landing-animate-fade-left,
-  .landing-animate-fade-right {
+  .landing-animate-fade-right,
+  .landing-animate-cinematic-emerge {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

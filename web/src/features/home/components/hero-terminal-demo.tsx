@@ -211,8 +211,13 @@ export function HeroTerminalDemo(props: HeroTerminalDemoProps) {
       <div
         className={cn(
           'overflow-hidden rounded-2xl border backdrop-blur-sm',
-          'border-border/60 bg-white/95 shadow-card-lift',
-          'dark:border-white/[0.06] dark:bg-[#0b0f17]/95'
+          /*
+           * Kept deliberately translucent: over the hero this panel sits on the
+           * nebula backdrop, and a near-opaque card would hide the part of the
+           * photo the first screen is built around.
+           */
+          'border-border/60 bg-white/85 shadow-card-lift',
+          'dark:border-white/[0.06] dark:bg-[#0b0f17]/80'
         )}
       >
         {/* Tab strip */}

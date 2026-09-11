@@ -26,19 +26,19 @@ const STEPS = [
   {
     title: 'Configure',
     desc: 'Add your API keys, set up channels and configure access permissions',
-    image: '/home/step-1-configure.webp',
+    image: '/home/3-step/1-config-picture.jpg',
     num: '1',
   },
   {
     title: 'Connect',
     desc: 'Connect via OpenAI, Claude, Gemini and more',
-    image: '/home/step-2-connect.webp',
+    image: '/home/3-step/2-onnection.jpg',
     num: '2',
   },
   {
     title: 'Monitor',
     desc: 'Track usage, costs and performance with real-time analytics',
-    image: '/home/step-3-monitor.webp',
+    image: '/home/3-step/3-monitor-picture.jpg',
     num: '3',
   },
 ]

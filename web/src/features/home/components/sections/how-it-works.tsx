@@ -34,19 +34,19 @@ export function HowItWorks() {
       desc: t(
         'Add your API keys, set up channels and configure access permissions'
       ),
-      image: '/home/step-1-configure.webp',
+      image: '/home/3-step/1-config-picture.jpg',
     },
     {
       num: '2',
       title: t('Connect'),
       desc: t('Connect via OpenAI, Claude, Gemini and more'),
-      image: '/home/step-2-connect.webp',
+      image: '/home/3-step/2-onnection.jpg',
     },
     {
       num: '3',
       title: t('Monitor'),
       desc: t('Track usage, costs and performance with real-time analytics'),
-      image: '/home/step-3-monitor.webp',
+      image: '/home/3-step/3-monitor-picture.jpg',
     },
   ] as const
 

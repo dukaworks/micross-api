@@ -201,7 +201,16 @@ export function PublicHeader(props: PublicHeaderProps) {
       <header
         className={cn(
           'pointer-events-none fixed inset-x-0 top-0 z-50',
-          overDarkSurface && 'dark'
+          /*
+           * `text-foreground` is load-bearing alongside `dark` — same reason as
+           * on the hero stage. `dark` only swaps the tokens inside this subtree;
+           * nodes that do not name a colour inherit `color` from `body`, which
+           * the light theme has already resolved to near-black. That leaves the
+           * wordmark beside the logo (a bare text node) and the `ghost` icon
+           * buttons (icons paint with `currentColor`) invisible on the dark
+           * backdrop. Re-anchoring `color` here fixes both.
+           */
+          overDarkSurface && 'dark text-foreground'
         )}
       >
         <div className='pointer-events-auto mx-auto max-w-7xl px-4 md:px-6'>

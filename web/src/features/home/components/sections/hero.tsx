@@ -108,9 +108,7 @@ export function Hero(props: HeroProps) {
   return (
     /*
      * The first screen is a deep-space backdrop, so it must render with the dark
-     * palette no matter which theme the visitor picked — otherwise the outline
-     * CTAs (transparent fill, theme-coloured label) disappear into the light
-     * theme's near-black text on a black photo.
+     * palette no matter which theme the visitor picked.
      *
      * `dark` scopes the dark token set to this section and therefore also drives
      * the `dark:` variants inside it; `bg-black` is the fallback that keeps the
@@ -118,11 +116,19 @@ export function Hero(props: HeroProps) {
      * instead of showing `PublicLayout`'s near-white page background. The
      * `data-hero-stage` hook lets the floating header keep its dark styling for
      * as long as this stage still sits behind it.
+     *
+     * `text-foreground` is load-bearing, not decoration. `dark` only swaps the
+     * CSS variables inside this subtree; bare text nodes (the first headline
+     * line, agent card names, the label inside the outline CTAs) do not re-read
+     * them, they inherit `color` from `body`. On the light theme `body` has
+     * already resolved to near-black, so those nodes vanish into the black
+     * backdrop. Re-anchoring `color` here makes every inherited node resolve
+     * against this section's dark `--foreground` instead.
      */
     <section
       ref={stageRef}
       data-hero-stage
-      className='dark hero-scroll-stage relative z-10 bg-black'
+      className='dark hero-scroll-stage text-foreground relative z-10 bg-black'
     >
       {/* Pinned screen: stays put for the whole travel distance. */}
       <div className='sticky top-0 h-svh overflow-hidden'>
@@ -232,10 +238,17 @@ export function Hero(props: HeroProps) {
               <HeroAgents />
             </div>
 
-            {/* Right Column: Hero Terminal API Demo */}
+            {/*
+             * Right Column: Hero Terminal API Demo
+             *
+             * Deliberately held back ~2s and revealed with the slower cinematic
+             * curve: the console is opaque enough to compete with the backdrop,
+             * so it has to arrive after the copy has landed and drift in
+             * gradually rather than covering the nebula straight away.
+             */}
             <div
-              className='landing-animate-fade-up flex w-full justify-center opacity-0 lg:col-span-6'
-              style={{ animationDelay: '320ms' }}
+              className='landing-animate-cinematic-emerge flex w-full justify-center opacity-0 lg:col-span-6'
+              style={{ animationDelay: '2000ms' }}
             >
               <HeroTerminalDemo className='mt-8 lg:mt-0' />
             </div>
