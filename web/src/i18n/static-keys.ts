@@ -174,6 +174,10 @@ export const STATIC_I18N_KEYS = [
   'Technical Support',
   'Professional team providing 24/7 technical support',
 
+  // User management — management access
+  'Management Access',
+  'Manage which workspaces this user can see. Unchecked entries are hidden from their sidebar and cannot be restored by the user.',
+
   // User management (interpolated keys)
   'Remaining Quota ({{currency}})',
   'Enter quota in tokens',
