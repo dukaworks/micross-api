@@ -61,6 +61,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import {
   ADMIN_PERMISSION_ACTIONS,
@@ -89,6 +90,11 @@ import {
   transformFormDataToPayload,
   transformUserToFormDefaults,
 } from '../lib'
+import {
+  managementSectionsForRole,
+  updateSectionConfig,
+  type SidebarModulesConfig,
+} from '../lib/management-access'
 import { type User } from '../types'
 import { UserQuotaDialog } from './user-quota-dialog'
 import { useUsers } from './users-provider'
@@ -154,7 +160,10 @@ export function UsersMutateDrawer({
   const currentQuotaRaw = form.watch('quota_dollars') || 0
   const selectedRole = form.watch('role')
   const canEditAdminPermissions = currentUser?.role === ROLE.SUPER_ADMIN
-  const targetIsAdmin = (selectedRole ?? currentRow?.role ?? 0) >= ROLE.ADMIN
+  const targetRole = selectedRole ?? currentRow?.role ?? 0
+  const targetIsAdmin = targetRole >= ROLE.ADMIN
+  // 系统管理按角色只对超级管理员开放，对普通管理员展示这些开关没有意义。
+  const managementSections = managementSectionsForRole(targetRole)
 
   const onSubmit = async (data: UserFormValues) => {
     if (!isUpdate) {
@@ -538,6 +547,106 @@ export function UsersMutateDrawer({
                             )}
                       </p>
                     )}
+                  </SideDrawerSection>
+                )}
+
+              {canEditAdminPermissions &&
+                targetIsAdmin &&
+                managementSections.length > 0 && (
+                  <SideDrawerSection>
+                    <h3 className='text-sm font-medium'>
+                      {t('Management Access')}
+                    </h3>
+                    <p className='text-muted-foreground text-xs'>
+                      {t(
+                        'Manage which workspaces this user can see. Unchecked entries are hidden from their sidebar and cannot be restored by the user.'
+                      )}
+                    </p>
+                    <FormField
+                      control={form.control}
+                      name='sidebar_modules'
+                      render={({ field }) => {
+                        const config = (field.value ??
+                          {}) as SidebarModulesConfig
+                        return (
+                          <FormItem>
+                            <div className='space-y-3'>
+                              {managementSections.map((section) => {
+                                const sectionConfig = config[section.key]
+                                const sectionEnabled =
+                                  sectionConfig?.enabled !== false
+                                return (
+                                  <div
+                                    key={section.key}
+                                    className='space-y-2 rounded-md border p-3'
+                                  >
+                                    <div className='flex items-start justify-between gap-3'>
+                                      <div className='min-w-0'>
+                                        <div className='text-sm font-medium'>
+                                          {t(section.labelKey)}
+                                        </div>
+                                        <p className='text-muted-foreground text-xs'>
+                                          {t(section.descriptionKey)}
+                                        </p>
+                                      </div>
+                                      <Switch
+                                        checked={sectionEnabled}
+                                        onCheckedChange={(checked) =>
+                                          field.onChange(
+                                            updateSectionConfig(
+                                              config,
+                                              section.key,
+                                              { enabled: checked }
+                                            )
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                    <div className='space-y-2'>
+                                      {section.modules.map((module) => (
+                                        <label
+                                          key={module.key}
+                                          className='flex items-start gap-3'
+                                        >
+                                          <Checkbox
+                                            checked={
+                                              sectionConfig?.[module.key] !==
+                                              false
+                                            }
+                                            disabled={!sectionEnabled}
+                                            onCheckedChange={(checked) =>
+                                              field.onChange(
+                                                updateSectionConfig(
+                                                  config,
+                                                  section.key,
+                                                  {
+                                                    [module.key]:
+                                                      checked === true,
+                                                  }
+                                                )
+                                              )
+                                            }
+                                          />
+                                          <span className='flex flex-col gap-1'>
+                                            <span className='text-sm font-medium'>
+                                              {t(module.labelKey)}
+                                            </span>
+                                            <span className='text-muted-foreground text-xs'>
+                                              {t(module.descriptionKey)}
+                                            </span>
+                                          </span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )
+                      }}
+                    />
                   </SideDrawerSection>
                 )}
 

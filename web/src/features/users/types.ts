@@ -62,6 +62,8 @@ export const userSchema = z.object({
   admin_permissions: z
     .record(z.string(), z.record(z.string(), z.boolean()))
     .optional(),
+  /** 用户级侧边栏可见性覆盖层（JSON 字符串），由管理端或用户本人在个人中心维护 */
+  sidebar_modules: z.string().optional(),
 })
 export type User = z.infer<typeof userSchema>
 
@@ -126,6 +128,8 @@ export interface UserFormData {
   group?: string // Only used when updating user
   remark?: string // Only used when updating user
   admin_permissions?: AdminPermissionMatrix
+  /** 序列化后的用户级侧边栏覆盖层；省略时后端不改动该字段 */
+  sidebar_modules?: string
 }
 
 export type ManageUserAction =

@@ -28,6 +28,11 @@ import { ROLE } from '@/lib/roles'
 
 import { DEFAULT_GROUP } from '../constants'
 import { type UserFormData, type User } from '../types'
+import {
+  parseSidebarModules,
+  serializeSidebarModules,
+  type SidebarModulesConfig,
+} from './management-access'
 
 // ============================================================================
 // Form Schema
@@ -42,6 +47,9 @@ export const userFormSchema = z.object({
   group: z.string().optional(),
   remark: z.string().optional(),
   admin_permissions: z
+    .record(z.string(), z.record(z.string(), z.boolean()))
+    .optional(),
+  sidebar_modules: z
     .record(z.string(), z.record(z.string(), z.boolean()))
     .optional(),
 })
@@ -62,6 +70,8 @@ export const USER_FORM_DEFAULT_VALUES: UserFormValues = {
   remark: '',
   // Filled against the backend catalog at render time; see UsersMutateDrawer.
   admin_permissions: {},
+  // 全部可见即「不收窄」；只有显式 false 才会隐藏入口。
+  sidebar_modules: parseSidebarModules(null),
 }
 
 // ============================================================================
@@ -94,6 +104,13 @@ export function transformFormDataToPayload(
     )
   }
 
+  // 侧边栏可见性覆盖层：只有管理员才可能进入管理区，普通用户下发没有意义。
+  if (role >= ROLE.ADMIN && data.sidebar_modules) {
+    payload.sidebar_modules = serializeSidebarModules(
+      data.sidebar_modules as SidebarModulesConfig
+    )
+  }
+
   // For create: only send required fields
   if (userId === undefined) {
     payload.role = role
@@ -122,5 +139,6 @@ export function transformUserToFormDefaults(user: User): UserFormValues {
     group: user.group || DEFAULT_GROUP,
     remark: user.remark || '',
     admin_permissions: user.admin_permissions ?? {},
+    sidebar_modules: parseSidebarModules(user.sidebar_modules),
   }
 }

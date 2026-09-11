@@ -389,6 +389,8 @@ func GetUser(c *gin.Context) {
 		return
 	}
 	user.AdminPermissions = authz.Capabilities(user.Id, user.Role)
+	// 管理端编辑用户时要回显该用户的侧边栏可见性覆盖层，它存在 setting JSON 里。
+	user.SidebarModules = user.GetSetting().SidebarModules
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "",
@@ -700,6 +702,8 @@ func UpdateUser(c *gin.Context) {
 		updatedUser.Password = "" // rollback to what it should be
 	}
 	updatePassword := updatedUser.Password != ""
+	// EditWithTx 会用数据库里的行刷新 updatedUser，先取出请求里的值备用。
+	sidebarModules := updatedUser.SidebarModules
 	authzTouched := false
 	if err := model.DB.Transaction(func(tx *gorm.DB) error {
 		if err := updatedUser.EditWithTx(tx, updatePassword); err != nil {
@@ -711,6 +715,12 @@ func UpdateUser(c *gin.Context) {
 	}); err != nil {
 		common.ApiError(c, err)
 		return
+	}
+	if sidebarModules != "" {
+		if err := model.UpdateUserSidebarModules(updatedUser.Id, sidebarModules); err != nil {
+			common.ApiError(c, err)
+			return
+		}
 	}
 	if authzTouched {
 		if err := authz.ReloadPolicy(); err != nil {
@@ -1046,6 +1056,13 @@ func CreateUser(c *gin.Context) {
 		}
 	}
 	cleanUser.FinishInsert(0)
+	// 覆盖角色默认的侧边栏配置，写入管理员为该用户指定的可见性覆盖层。
+	if user.SidebarModules != "" {
+		if err := model.UpdateUserSidebarModules(cleanUser.Id, user.SidebarModules); err != nil {
+			common.ApiError(c, err)
+			return
+		}
+	}
 
 	recordManageAuditFor(c, cleanUser.Id, "user.create", map[string]interface{}{
 		"username": cleanUser.Username,

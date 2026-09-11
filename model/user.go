@@ -110,6 +110,10 @@ type User struct {
 	LastLoginAt      int64                      `json:"last_login_at" gorm:"default:0;column:last_login_at"`
 	AuthVersion      int64                      `json:"-" gorm:"type:bigint;not null;default:1;column:auth_version"`
 	AdminPermissions map[string]map[string]bool `json:"admin_permissions,omitempty" gorm:"-:all"`
+	// SidebarModules 只用于管理端用户编辑接口传递该用户的侧边栏可见性覆盖层，
+	// 真实存储位置是 setting JSON 里的 sidebar_modules 字段（见 dto.UserSetting），
+	// 不是独立列，因此标记为 gorm:"-:all"。
+	SidebarModules string `json:"sidebar_modules,omitempty" gorm:"-:all"`
 }
 
 func (user *User) ToBaseUser() *UserBase {
@@ -187,6 +191,38 @@ func UpdateUserSetting(userId int, setting dto.UserSetting) error {
 	if err = DB.Model(&User{}).Where("id = ?", userId).Update("setting", settingValue).Error; err != nil {
 		return err
 	}
+	return updateUserSettingCache(userId, settingValue)
+}
+
+// UpdateUserSidebarModules 只更新 setting 列里的 sidebar_modules 覆盖层。
+// 采用「加锁读当前 setting → 只替换 sidebar_modules → 写回 setting 列」的方式，
+// 避免用整个用户快照覆盖并发发生的其它变更（角色、封禁、分组）。
+func UpdateUserSidebarModules(userId int, sidebarModules string) error {
+	if userId <= 0 {
+		return errors.New("id 为空！")
+	}
+	if sidebarModules == "" {
+		return errors.New("sidebar_modules 为空！")
+	}
+
+	var settingValue string
+	if err := DB.Transaction(func(tx *gorm.DB) error {
+		current := User{}
+		if err := lockForUpdate(tx).First(&current, userId).Error; err != nil {
+			return err
+		}
+		setting := current.GetSetting()
+		setting.SidebarModules = sidebarModules
+		settingBytes, err := common.Marshal(setting)
+		if err != nil {
+			return err
+		}
+		settingValue = string(settingBytes)
+		return tx.Model(&User{}).Where("id = ?", userId).Update("setting", settingValue).Error
+	}); err != nil {
+		return err
+	}
+
 	return updateUserSettingCache(userId, settingValue)
 }
 
