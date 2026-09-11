@@ -140,8 +140,8 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
   return (
     <div
       className={cn(
-        'group relative flex flex-col rounded-xl border p-3 transition-colors sm:p-5',
-        'hover:bg-muted/20'
+        'group border-border/50 bg-card relative flex flex-col rounded-2xl border p-3 shadow-card transition-all duration-300 sm:p-5',
+        'hover:-translate-y-1 hover:shadow-card-lift'
       )}
     >
       {/* Header: icon + name + price + actions */}

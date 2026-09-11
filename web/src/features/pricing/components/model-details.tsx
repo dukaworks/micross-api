@@ -388,7 +388,7 @@ function ModelBackendSignalsSection(props: { model: PricingModel }) {
       <SectionTitle>
         {t('Capabilities')} / {t('Supported modalities')}
       </SectionTitle>
-      <div className='grid gap-3 rounded-xl border p-3 @2xl/details:grid-cols-[minmax(0,1.5fr)_minmax(260px,1fr)]'>
+      <div className='grid gap-3 rounded-lg border p-3 @2xl/details:grid-cols-[minmax(0,1.5fr)_minmax(260px,1fr)]'>
         {capabilities.length > 0 ? (
           <CatalogPillList
             items={capabilities.map((capability) =>
@@ -776,7 +776,7 @@ export function ModelDetailsContent(props: ModelDetailsContentProps) {
         <TabsContent value='overview' className='space-y-6 outline-none'>
           <OverviewSummaryGrid model={props.model} />
 
-          <section className='bg-card/60 space-y-5 rounded-xl border p-4 shadow-sm'>
+          <section className='bg-card border-border/50 space-y-5 rounded-2xl border p-4 shadow-card'>
             <SectionTitle>{t('Pricing')}</SectionTitle>
             <PriceSection model={props.model} />
             {isDynamic && (
