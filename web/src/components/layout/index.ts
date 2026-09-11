@@ -24,6 +24,8 @@ For commercial licensing, please contact support@quantumnous.com
 export { AppHeader } from './components/app-header'
 export { AppSidebar } from './components/app-sidebar'
 export { AuthenticatedLayout } from './components/authenticated-layout'
+export { Container, CONTAINER_PADDING } from './components/container'
+export { Footer } from './components/footer'
 export { PublicLayout } from './components/public-layout'
 export { PublicHeader } from './components/public-header'
 export { PublicNavigation } from './components/public-navigation'
@@ -53,6 +55,7 @@ export {
 } from './lib/sidebar-view-registry'
 
 // Type exports (type-only to avoid conflicts with components above)
+export type { ContainerWidth } from './components/container'
 export type {
   NavCollapsible,
   NavGroup as NavGroupType,

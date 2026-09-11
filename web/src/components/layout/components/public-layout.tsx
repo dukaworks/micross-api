@@ -17,11 +17,29 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import type { TopNavLink } from '../types'
+import { Container, type ContainerWidth } from './container'
+import { Footer } from './footer'
 import { PublicHeader, type PublicHeaderProps } from './public-header'
 
 type PublicLayoutProps = {
   children: React.ReactNode
-  showMainContainer?: boolean
+  /**
+   * Content width token applied by the layout (see `.docs/frontend/layout-system.md`).
+   *
+   * Pass `false` only for surfaces that own their layout end to end — a
+   * full-bleed iframe, admin-authored HTML, or a hero-first landing page that
+   * handles its own top offset and width. Such pages also default to no
+   * header offset and no footer, both of which can be re-enabled explicitly.
+   */
+  container?: ContainerWidth | false
+  /** Reserves vertical room for the floating header. Defaults to `true`. */
+  headerOffset?: boolean
+  /**
+   * Mounts the shared page footer. Defaults to `true` — every public page is
+   * expected to close with the footer. Full-bleed surfaces (iframes,
+   * isolated admin HTML) opt out explicitly.
+   */
+  showFooter?: boolean
   navContent?: React.ReactNode
   headerProps?: Omit<PublicHeaderProps, 'navContent'>
   navLinks?: TopNavLink[]
@@ -33,6 +51,15 @@ type PublicLayoutProps = {
 }
 
 export function PublicLayout(props: PublicLayoutProps) {
+  // A page that owns its own layout renders no <main> wrapper, so the header
+  // offset (which lives on that wrapper) does not apply to it.
+  const ownsLayout = props.container === false
+  const headerOffset = props.headerOffset ?? !ownsLayout
+  const contentWidth: ContainerWidth =
+    props.container === undefined || props.container === false
+      ? 'default'
+      : props.container
+
   return (
     <div className='bg-background text-foreground relative min-h-svh overflow-x-clip'>
       <PublicHeader
@@ -46,13 +73,17 @@ export function PublicLayout(props: PublicLayoutProps) {
         {...props.headerProps}
       />
 
-      {props.showMainContainer !== false ? (
-        <main className='container px-4 py-6 pt-20 md:px-4'>
-          {props.children}
-        </main>
-      ) : (
+      {ownsLayout ? (
         props.children
+      ) : (
+        <main className={headerOffset ? 'pt-16 sm:pt-20' : undefined}>
+          <Container width={contentWidth}>
+            {props.children}
+          </Container>
+        </main>
       )}
+
+      {(props.showFooter ?? true) && <Footer />}
     </div>
   )
 }

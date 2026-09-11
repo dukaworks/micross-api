@@ -116,8 +116,8 @@ export function About() {
 
   if (isLoading) {
     return (
-      <PublicLayout>
-        <div className='mx-auto flex max-w-4xl flex-col gap-4 py-12'>
+      <PublicLayout container='default'>
+        <div className='flex flex-col gap-4 py-12'>
           <Skeleton className='h-8 w-[45%]' />
           <Skeleton className='h-4 w-full' />
           <Skeleton className='h-4 w-[90%]' />
@@ -129,7 +129,7 @@ export function About() {
 
   if (!hasContent) {
     return (
-      <PublicLayout>
+      <PublicLayout container='default'>
         <EmptyAboutState />
       </PublicLayout>
     )
@@ -137,7 +137,7 @@ export function About() {
 
   if (isUrl) {
     return (
-      <PublicLayout showMainContainer={false}>
+      <PublicLayout container={false}>
         <iframe
           src={rawContent}
           className='h-[calc(100vh-3.5rem)] w-full border-0'
@@ -150,7 +150,7 @@ export function About() {
 
   if (contentIsHtml) {
     return (
-      <PublicLayout showMainContainer={false}>
+      <PublicLayout container='full'>
         <RichContent
           mode='html'
           htmlVariant='isolated'
@@ -162,12 +162,12 @@ export function About() {
   }
 
   return (
-    <PublicLayout>
-      <div className='mx-auto max-w-6xl px-4 py-8'>
+    <PublicLayout container='default'>
+      <div className='py-8'>
         <RichContent
           mode='markdown'
           content={rawContent}
-          className='prose-neutral dark:prose-invert max-w-none'
+          className='prose-neutral dark:prose-invert'
         />
       </div>
     </PublicLayout>

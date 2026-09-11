@@ -20,6 +20,7 @@ import { Settings, Zap, BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
+import { Container } from '@/components/layout'
 
 export function HowItWorks() {
   const { t } = useTranslation()
@@ -50,8 +51,8 @@ export function HowItWorks() {
   ]
 
   return (
-    <section className='border-border/40 relative z-10 border-t px-6 py-24 md:py-32'>
-      <div className='mx-auto max-w-6xl'>
+    <section className='border-border/40 relative z-10 border-t py-24 md:py-32'>
+      <Container>
         <AnimateInView className='mb-16 text-center md:mb-20'>
           <p className='text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase'>
             {t('How It Works')}
@@ -84,7 +85,7 @@ export function HowItWorks() {
             </AnimateInView>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   )
 }

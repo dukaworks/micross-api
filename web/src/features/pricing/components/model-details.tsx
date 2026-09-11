@@ -1275,8 +1275,8 @@ export function ModelDetails() {
 
   if (isLoading) {
     return (
-      <PublicLayout>
-        <div className='mx-auto max-w-5xl px-4 sm:px-6'>
+      <PublicLayout container='default'>
+        <div>
           <Skeleton className='mb-4 h-5 w-16' />
           <div className='space-y-2'>
             <Skeleton className='h-7 w-64' />
@@ -1300,8 +1300,8 @@ export function ModelDetails() {
 
   if (!model) {
     return (
-      <PublicLayout>
-        <div className='mx-auto max-w-2xl px-4 text-center sm:px-6'>
+      <PublicLayout container='default'>
+        <div className='mx-auto max-w-2xl text-center'>
           <h2 className='mb-1 text-base font-semibold'>
             {t('Model not found')}
           </h2>
@@ -1317,8 +1317,8 @@ export function ModelDetails() {
   }
 
   return (
-    <PublicLayout>
-      <div className='mx-auto max-w-5xl px-4 sm:px-6'>
+    <PublicLayout container='default'>
+      <div>
         <Button
           variant='ghost'
           size='sm'

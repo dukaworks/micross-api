@@ -24,7 +24,14 @@ import { type TopNavLink } from '../types'
  * In practice, navigation links are dynamically fetched from backend.
  * Priority: Backend dynamic links > Provided navLinks > defaultTopNavLinks
  *
- * This is intentionally empty to encourage backend configuration.
- * If you need fallback links, add them here.
+ * These act as the built-in fallback so the public header always exposes the
+ * public pages (model square / rankings / about). Backend-configured links
+ * still take precedence.
+ *
+ * Titles are English source strings resolved through i18next at render time.
  */
-export const defaultTopNavLinks: TopNavLink[] = []
+export const defaultTopNavLinks: TopNavLink[] = [
+  { title: 'Model Square', href: '/pricing' },
+  { title: 'Rankings', href: '/rankings' },
+  { title: 'About', href: '/about' },
+]

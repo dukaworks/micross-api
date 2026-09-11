@@ -19,6 +19,8 @@ For commercial licensing, please contact support@quantumnous.com
 import { useRef, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { Container } from '@/components/layout'
+
 interface CounterProps {
   end: number
   suffix?: string
@@ -106,7 +108,7 @@ export function Stats(_props: StatsProps) {
 
   return (
     <div className='border-border/40 bg-muted/10 relative z-10 border-y'>
-      <div className='mx-auto max-w-6xl px-6 py-10 md:py-12'>
+      <Container className='py-10 md:py-12'>
         <div className='grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12'>
           {stats.map((s) => (
             <div
@@ -122,7 +124,7 @@ export function Stats(_props: StatsProps) {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </div>
   )
 }

@@ -18,17 +18,26 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { cn } from '@/lib/utils'
 
+import { CONTAINER_WIDTH_CLASS, type ContainerWidth } from './container'
+
 type MainProps = React.HTMLAttributes<HTMLElement> & {
-  fluid?: boolean
+  /**
+   * Content width token (see `.docs/frontend/layout-system.md`). Defaults to
+   * `full` so existing admin pages keep their current layout; a page opts into
+   * a capped width explicitly.
+   */
+  width?: ContainerWidth
 }
 
-export function Main({ className, fluid = true, ...props }: MainProps) {
+export function Main({ className, width = 'full', ...props }: MainProps) {
   return (
     <main
+      data-slot='main'
+      data-width={width}
       className={cn(
         'flex min-h-0 flex-1 flex-col overflow-hidden',
-        !fluid &&
-          '@7xl/content:mx-auto @7xl/content:w-full @7xl/content:max-w-7xl',
+        'mx-auto w-full',
+        CONTAINER_WIDTH_CLASS[width],
         className
       )}
       {...props}

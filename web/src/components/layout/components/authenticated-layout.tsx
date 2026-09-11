@@ -37,23 +37,28 @@ export function AuthenticatedLayout(props: AuthenticatedLayoutProps) {
   return (
     <LayoutProvider>
       <SearchProvider>
-        <SidebarProvider defaultOpen={defaultOpen} className='flex-col'>
-          <SkipToMain />
-          <AppHeader />
-          <div className='flex min-h-0 w-full flex-1'>
-            <AppSidebar />
-            <SidebarInset
-              className={cn(
-                '@container/content',
-                'h-[calc(100svh-var(--app-header-height,0px))]',
-                'min-h-0 overflow-hidden',
-                'peer-data-[variant=inset]:h-[calc(100svh-var(--app-header-height,0px)-(var(--spacing)*4))]'
-              )}
-            >
-              {props.children ?? <AnimatedOutlet />}
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
+        {/* Header, sidebar and content share this centred canvas, so the
+         * console never spans the full viewport on wide screens. Full-bleed
+         * below `lg`. See `.docs/frontend/layout-system.md`. */}
+        <div className='mx-auto flex min-h-svh w-full flex-col lg:max-w-container-lg lg:border-x'>
+          <SidebarProvider defaultOpen={defaultOpen} className='flex-col'>
+            <SkipToMain />
+            <AppHeader />
+            <div className='flex min-h-0 w-full flex-1'>
+              <AppSidebar />
+              <SidebarInset
+                className={cn(
+                  '@container/content',
+                  'h-[calc(100svh-var(--app-header-height,0px))]',
+                  'min-h-0 overflow-hidden',
+                  'peer-data-[variant=inset]:h-[calc(100svh-var(--app-header-height,0px)-(var(--spacing)*4))]'
+                )}
+              >
+                {props.children ?? <AnimatedOutlet />}
+              </SidebarInset>
+            </div>
+          </SidebarProvider>
+        </div>
       </SearchProvider>
     </LayoutProvider>
   )

@@ -25,6 +25,7 @@ import { toast } from 'sonner'
 
 import { ErrorState } from '@/components/error-state'
 import { LanguageSwitcher } from '@/components/language-switcher'
+import { Container } from '@/components/layout'
 import { LoadingState } from '@/components/loading-state'
 import {
   Card,
@@ -283,7 +284,7 @@ export function SetupWizard() {
       <div className='absolute top-4 right-4 sm:top-6 sm:right-6'>
         <LanguageSwitcher />
       </div>
-      <div className='container mx-auto flex max-w-5xl flex-col gap-8 px-4 sm:px-6'>
+      <Container width='narrow' className='flex flex-col gap-8'>
         <div className='flex flex-col items-center gap-3'>
           <div className='relative h-12 w-12'>
             {systemConfigLoading ? (
@@ -396,7 +397,7 @@ export function SetupWizard() {
             </CardFooter>
           )}
         </Card>
-      </div>
+      </Container>
     </div>
   )
 }

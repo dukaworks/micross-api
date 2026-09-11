@@ -168,9 +168,15 @@ For commercial licensing, please contact support@quantumnous.com
   }
 }
 
-@utility container {
-  margin-inline: auto;
-  padding-inline: 2rem;
+/* ── Layout width scale ──
+ * Single source of truth for content widths. See .docs/frontend/layout-system.md
+ *   narrow  = 896px   reading / legal / about / forms
+ *   default = 1280px  landing, rankings, admin form pages
+ *   wide    = 1536px  model marketplace, admin console canvas
+ *   full    = 100%    playground / chat workspaces (safe padding still applies)
+ */
+@utility max-w-container-sm {
+  max-width: 896px;
 }
 
 @utility max-w-container {
@@ -179,6 +185,17 @@ For commercial licensing, please contact support@quantumnous.com
 
 @utility max-w-container-lg {
   max-width: 1536px;
+}
+
+/* The built-in `container` utility must center *and* cap the content width.
+ * Previously it only set padding, so it silently rendered full-bleed — the
+ * root cause of unconstrained public pages. Its inline padding now matches
+ * the shared horizontal scale (`px-4`) so the two no longer fight. */
+@utility container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 1280px;
+  padding-inline: 1rem;
 }
 
 @utility no-scrollbar {

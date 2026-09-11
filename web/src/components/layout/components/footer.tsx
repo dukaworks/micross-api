@@ -24,6 +24,8 @@ import { useStatus } from '@/hooks/use-status'
 import { useSystemConfig } from '@/hooks/use-system-config'
 import { cn } from '@/lib/utils'
 
+import { Container } from './container'
+
 interface FooterLink {
   text: string
   href: string
@@ -223,7 +225,7 @@ export function Footer(props: FooterProps) {
           props.className
         )}
       >
-        <div className='mx-auto w-full max-w-6xl px-6 py-5'>
+        <Container className='py-5'>
           <div className='bg-muted/20 border-border/50 flex flex-col items-center justify-between gap-4 rounded-2xl border px-4 py-4 backdrop-blur-sm sm:flex-row sm:px-5'>
             <div
               className='custom-footer text-muted-foreground min-w-0 text-center text-sm sm:text-left'
@@ -234,7 +236,7 @@ export function Footer(props: FooterProps) {
               <ProjectAttribution inline />
             </div>
           </div>
-        </div>
+        </Container>
       </footer>
     )
   }
@@ -243,7 +245,7 @@ export function Footer(props: FooterProps) {
     <footer
       className={cn('border-border/40 relative z-10 border-t', props.className)}
     >
-      <div className='mx-auto max-w-6xl px-6 py-12 md:py-16'>
+      <Container className='py-12 md:py-16'>
         <div className='flex flex-col justify-between gap-10 md:flex-row md:gap-16'>
           {/* Brand column */}
           <div className='shrink-0'>
@@ -295,7 +297,7 @@ export function Footer(props: FooterProps) {
           </div>
           <ProjectAttribution />
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

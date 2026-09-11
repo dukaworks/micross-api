@@ -29,6 +29,7 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
+import { Container } from '@/components/layout'
 
 interface FeaturesProps {
   className?: string
@@ -180,8 +181,8 @@ export function Features(_props: FeaturesProps) {
   ]
 
   return (
-    <section className='relative z-10 px-6 py-24 md:py-32'>
-      <div className='mx-auto max-w-6xl'>
+    <section className='relative z-10 py-24 md:py-32'>
+      <Container>
         <AnimateInView className='mb-16 max-w-lg'>
           <p className='text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase'>
             {t('Core Features')}
@@ -235,7 +236,7 @@ export function Features(_props: FeaturesProps) {
             </AnimateInView>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   )
 }

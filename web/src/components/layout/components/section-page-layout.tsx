@@ -54,6 +54,13 @@ export type SectionPageLayoutProps = {
   fixedContent?: boolean
 }
 
+/**
+ * Admin content fills the console canvas. The canvas itself is width-capped in
+ * `authenticated-layout.tsx`, so pages add no second cap. Pages cannot override
+ * it — see `.docs/frontend/layout-system.md`.
+ */
+const ADMIN_CONTENT_WIDTH = 'full' as const
+
 export function SectionPageLayout(props: SectionPageLayoutProps) {
   const [footerContainer, setFooterContainer] = useState<HTMLDivElement | null>(
     null
@@ -78,8 +85,8 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
 
   return (
     <PageFooterProvider container={footerContainer}>
-      <Main>
-        <div className='shrink-0 px-3 pt-3 pb-2.5 sm:px-4 sm:pt-5 sm:pb-3'>
+      <Main width={ADMIN_CONTENT_WIDTH}>
+        <div className='shrink-0 px-4 pt-3 pb-2.5 sm:px-6 sm:pt-5 sm:pb-3 lg:px-8'>
           {breadcrumb != null && (
             <div className='mb-2 sm:mb-3'>{breadcrumb}</div>
           )}
@@ -100,8 +107,8 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
         <div
           className={
             props.fixedContent
-              ? 'min-h-0 flex-1 overflow-hidden px-3 pt-1 pb-3 sm:px-4 sm:pt-1.5 sm:pb-4'
-              : 'min-h-0 flex-1 overflow-auto px-3 pt-1 pb-3 sm:px-4 sm:pt-1.5 sm:pb-4'
+              ? 'min-h-0 flex-1 overflow-hidden px-4 pt-1 pb-3 sm:px-6 sm:pt-1.5 sm:pb-4 lg:px-8'
+              : 'min-h-0 flex-1 overflow-auto px-4 pt-1 pb-3 sm:px-6 sm:pt-1.5 sm:pb-4 lg:px-8'
           }
         >
           {content}
@@ -109,7 +116,7 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
 
         <div
           ref={setFooterContainer}
-          className='bg-background shrink-0 border-t px-3 py-2.5 empty:hidden sm:px-4 sm:py-3'
+          className='bg-background shrink-0 border-t px-4 py-2.5 empty:hidden sm:px-6 sm:py-3 lg:px-8'
         />
       </Main>
     </PageFooterProvider>
