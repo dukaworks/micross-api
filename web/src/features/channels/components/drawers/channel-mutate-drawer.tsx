@@ -495,7 +495,7 @@ function ChannelEditorNav(props: {
       <div className='flex max-h-[calc(100dvh-12rem)] flex-col gap-3 overflow-y-auto overscroll-contain pr-1'>
         <div className='border-border/60 bg-muted/20 rounded-lg border p-3'>
           <div className='flex min-w-0 items-center gap-2'>
-            <span className='bg-background flex size-8 shrink-0 items-center justify-center rounded-md border'>
+            <span className='bg-background flex size-8 shrink-0 items-center justify-center rounded-md'>
               {props.providerLogo}
             </span>
             <div className='min-w-0'>

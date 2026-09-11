@@ -91,10 +91,36 @@ For commercial licensing, please contact support@quantumnous.com
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Card elevation — one soft shadow for every card surface. The values live
+   * in `:root` / `.dark` so both themes are declared side by side. */
+  --shadow-card: var(--elevation-card);
+  --shadow-card-lift: var(--elevation-card-lift);
 }
 
 :root {
-  --radius: 1rem;
+  /* Global corner scale: every `rounded-*` utility derives from this one value
+   * (see the radius block in `@theme inline` above), so the roundness of the
+   * whole product is retuned here.
+   *
+   * 2026-09-11: 1rem → 0.5rem (halved). At 1rem a `rounded-2xl` card was
+   * 28.8px and a `rounded-lg` button (h-8) was 16px — exactly half of its own
+   * height, so every button read as a pill. Halved: cards 14.4px, buttons 8px. */
+  --radius: 0.5rem;
+  /* Card elevation: the resting depth, and the lifted depth used on hover.
+   * The lifted value keeps the landing hero terminal card's shadow as its
+   * main layer, so every card settles at the same height above the page.
+   *
+   * Both layers are needed on the light theme. A single wide soft shadow is
+   * invisible here, because `--card` and `--background` are both near-white
+   * and the (negative-spread) blur has almost no darker canvas to fall on.
+   * The tight `0 1px 2px` contact layer gives the card a visible edge, and
+   * the background is nudged below pure white in `:root` so white cards can
+   * separate the same way they already do on the dark theme. */
+  --elevation-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 12px 30px -16px
+    rgb(15 23 42 / 0.16);
+  --elevation-card-lift: 0 2px 4px rgb(15 23 42 / 0.06), 0 20px 50px -22px
+    rgb(15 23 42 / 0.2);
   --app-header-height: 4rem;
   /* Static build-channel fallback consumed when JS hasn't booted yet. */
   --app-rev: '2k6e8r7p';
@@ -103,7 +129,10 @@ For commercial licensing, please contact support@quantumnous.com
    * in theme-presets.css. Default mirrors `--font-sans` so behavior is
    * identical when no font preference is set. */
   --font-body: var(--font-sans);
-  --background: oklch(1 0 0);
+  /* Deliberately not pure white: `--card` is pure white, and a 1% separation
+   * is what lets cards read as surfaces on the light theme (the dark theme
+   * gets the same effect from `--card` being lighter than `--background`). */
+  --background: oklch(0.98 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -146,8 +175,10 @@ For commercial licensing, please contact support@quantumnous.com
   --sidebar-accent-foreground: oklch(0.579 0.196 255.909);
   --sidebar-border: oklch(0.93 0 0);
   --sidebar-ring: oklch(0.58 0.2 250);
-  --skeleton-base: oklch(0.97 0 0);
-  --skeleton-highlight: oklch(0.985 0 0);
+  /* Kept a step darker than the page now that `--background` left pure
+   * white, so page-level placeholders keep their contrast. */
+  --skeleton-base: oklch(0.96 0 0);
+  --skeleton-highlight: oklch(0.98 0 0);
   --table-row: var(--background);
   --table-header: color-mix(
     in oklch,
@@ -180,6 +211,9 @@ For commercial licensing, please contact support@quantumnous.com
 
 .dark {
   /* OpenAI-like dark mode with a crisp charcoal canvas. */
+  /* Card elevation needs more opacity on charcoal to still read as depth. */
+  --elevation-card: 0 12px 34px -20px rgb(0 0 0 / 0.55);
+  --elevation-card-lift: 0 20px 60px -25px rgb(0 0 0 / 0.7);
   --background: oklch(0.235 0 0);
   --foreground: oklch(0.965 0 0);
   --card: oklch(0.285 0 0);

@@ -547,6 +547,43 @@ For commercial licensing, please contact support@quantumnous.com
   animation: landing-fade-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* ---------------------------------------------------------------------------
+ * Home hero scroll stage
+ *
+ * `.hero-scroll-stage` reserves the scroll travel of the pinned hero screen
+ * (100svh of visible screen + the travel distance), and `.hero-content-overlap`
+ * pulls the following sections up by that same distance so the page still
+ * advances exactly one viewport. The two MUST stay in sync.
+ *
+ * Under `prefers-reduced-motion` the travel collapses to zero: the stage
+ * becomes a plain one-screen section and the transition disappears, without
+ * any JS branch.
+ * ------------------------------------------------------------------------- */
+.hero-scroll-stage {
+  height: calc(100svh + 60svh);
+}
+.hero-content-overlap {
+  margin-top: -60svh;
+}
+
+@media (min-width: 768px) {
+  .hero-scroll-stage {
+    height: calc(100svh + 100svh);
+  }
+  .hero-content-overlap {
+    margin-top: -100svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-stage {
+    height: 100svh;
+  }
+  .hero-content-overlap {
+    margin-top: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing-animate-fade-up,
   .landing-animate-fade-in,
@@ -568,13 +605,11 @@ For commercial licensing, please contact support@quantumnous.com
   }
 
   @media (min-width: 641px) {
+    /* Hover lifts the card to `--elevation-card-lift` (theme.css): the same
+     * depth as the landing hero terminal card, so every card matches. */
     [data-slot='card']:not([data-card-hover='false']):hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.06);
-    }
-
-    .dark [data-slot='card']:not([data-card-hover='false']):hover {
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+      transform: translateY(-2px);
+      box-shadow: var(--elevation-card-lift);
     }
   }
 

@@ -16,15 +16,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { CherryStudio } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
 import { ArrowRight, BookOpen } from 'lucide-react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Container } from '@/components/layout'
 import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 
+import { HeroAgents } from '../hero-agents'
 import { HeroTerminalDemo } from '../hero-terminal-demo'
 
 interface HeroProps {
@@ -32,24 +34,45 @@ interface HeroProps {
   isAuthenticated?: boolean
 }
 
-// Stylized three-dots indicator representing "More"
-const MoreIcon = () => (
-  <svg
-    className='text-muted-foreground/60 group-hover:text-foreground size-6 shrink-0 transition-colors'
-    viewBox='0 0 24 24'
-    fill='none'
-    xmlns='http://www.w3.org/2000/svg'
-  >
-    <circle cx='6' cy='12' r='2' fill='currentColor' />
-    <circle cx='12' cy='12' r='2' fill='currentColor' />
-    <circle cx='18' cy='12' r='2' fill='currentColor' />
-  </svg>
-)
-
 export function Hero(props: HeroProps) {
   const { t } = useTranslation()
   const { status } = useStatus()
   const docsUrl = (status?.docs_link as string | undefined) || ''
+
+  const stageRef = useRef<HTMLElement>(null)
+  const reduceMotion = useReducedMotion()
+
+  // Progress 0 → 1 spans exactly the pinned travel, because the stage height is
+  // `100svh + travel` (see `.hero-scroll-stage` in styles/index.css).
+  const { scrollYProgress } = useScroll({
+    target: stageRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const backdropScale = useTransform(scrollYProgress, [0, 1], [1, 1.08])
+  const backdropOpacity = useTransform(scrollYProgress, [0, 0.55, 1], [1, 1, 0])
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.94])
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -64])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.4, 1], [1, 1, 0])
+  const contentBlur = useTransform(
+    scrollYProgress,
+    [0, 0.45, 1],
+    ['blur(0px)', 'blur(0px)', 'blur(8px)']
+  )
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, -28])
+
+  const backdropStyle = reduceMotion
+    ? undefined
+    : { scale: backdropScale, opacity: backdropOpacity }
+  const contentStyle = reduceMotion
+    ? undefined
+    : {
+        scale: contentScale,
+        y: contentY,
+        opacity: contentOpacity,
+        filter: contentBlur,
+      }
+  const titleStyle = reduceMotion ? undefined : { y: titleY }
 
   const renderDocsButton = () => {
     if (!docsUrl) return null
@@ -58,7 +81,8 @@ export function Hero(props: HeroProps) {
       return (
         <Button
           variant='outline'
-          className='group border-border/50 hover:border-border hover:bg-muted/50 inline-flex h-11 items-center gap-1.5 rounded-lg px-5 text-sm font-medium'
+          size='xl'
+          className='group border-border/50 hover:border-border hover:bg-muted/50'
           render={
             <a href={docsUrl} target='_blank' rel='noopener noreferrer' />
           }
@@ -71,7 +95,8 @@ export function Hero(props: HeroProps) {
     return (
       <Button
         variant='outline'
-        className='group border-border/50 hover:border-border hover:bg-muted/50 inline-flex h-11 items-center gap-1.5 rounded-lg px-5 text-sm font-medium'
+        size='xl'
+        className='group border-border/50 hover:border-border hover:bg-muted/50'
         render={<Link to={docsUrl} />}
       >
         <BookOpen className='text-muted-foreground/80 group-hover:text-foreground size-4 transition-colors duration-200' />
@@ -81,166 +106,142 @@ export function Hero(props: HeroProps) {
   }
 
   return (
-    <section className='relative z-10 overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-36 lg:pb-28'>
-      {/* Radial gradient background */}
-      <div
-        aria-hidden
-        className='pointer-events-none absolute inset-0 -z-10 opacity-25 dark:opacity-[0.12]'
-        style={{
-          background: [
-            'radial-gradient(ellipse 60% 50% at 20% 20%, oklch(0.72 0.18 250 / 80%) 0%, transparent 70%)',
-            'radial-gradient(ellipse 50% 40% at 80% 15%, oklch(0.65 0.15 200 / 60%) 0%, transparent 70%)',
-            'radial-gradient(ellipse 40% 35% at 40% 80%, oklch(0.70 0.12 280 / 40%) 0%, transparent 70%)',
-          ].join(', '),
-        }}
-      />
-      {/* Grid pattern */}
-      <div
-        aria-hidden
-        className='absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_30%,black_20%,transparent_100%)] bg-[size:4rem_4rem] opacity-[0.08]'
-      />
-
-      <Container className='grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-8'>
-        {/* Left Column: Title, description, action buttons and application support */}
-        <div className='flex flex-col items-start text-left lg:col-span-6'>
-          {/* Top Pill Badge */}
-          <div
-            className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1.5 text-[11px] font-medium text-blue-600 opacity-0 shadow-xs dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'
-            style={{ animationDelay: '0ms' }}
-          >
-            <span className='relative flex size-1.5'>
-              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75' />
-              <span className='relative inline-flex size-1.5 rounded-full bg-blue-500 dark:bg-blue-400' />
-            </span>
-            <span>{t('AI Application Infrastructure Foundation')}</span>
-          </div>
-
-          <h1
-            className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
-            style={{ animationDelay: '60ms' }}
-          >
-            {t('Unified API Gateway for')}
-            <br />
-            <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
-              {t('Vast Range of AI Models')}
-            </span>
-          </h1>
-          <p
-            className='landing-animate-fade-up text-muted-foreground/80 mt-5 max-w-xl text-base leading-relaxed opacity-0 md:text-[15px]'
-            style={{ animationDelay: '120ms' }}
-          >
-            {t(
-              'Access a vast selection of models via a standard, unified API protocol. Power AI applications, manage digital assets, and connect the Future.'
-            )}
-          </p>
-
-          <div
-            className='landing-animate-fade-up mt-8 flex flex-wrap items-center gap-3 opacity-0'
-            style={{ animationDelay: '180ms' }}
-          >
-            {props.isAuthenticated ? (
-              <>
-                <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium'
-                  render={<Link to='/dashboard' />}
-                >
-                  {t('Go to Dashboard')}
-                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
-                </Button>
-                {renderDocsButton()}
-              </>
-            ) : (
-              <>
-                <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium'
-                  render={<Link to='/sign-up' />}
-                >
-                  {t('Get Started')}
-                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
-                </Button>
-                <Button
-                  variant='outline'
-                  className='border-border/50 hover:border-border hover:bg-muted/50 h-11 rounded-lg px-5 text-sm font-medium'
-                  render={<Link to='/pricing' />}
-                >
-                  {t('View Pricing')}
-                </Button>
-                {renderDocsButton()}
-              </>
-            )}
-          </div>
-
-          {/* Supported Apps (参考图二样式，进行卡片化和信息扩充设计，增加视觉高度) */}
-          <div
-            className='landing-animate-fade-up mt-10 w-full max-w-xl opacity-0'
-            style={{ animationDelay: '240ms' }}
-          >
-            <div className='mb-4 flex flex-col gap-1'>
-              <span className='text-muted-foreground/50 text-[10px] font-bold tracking-[0.15em] uppercase'>
-                {t('Supported Applications')}
-              </span>
-              <p className='text-muted-foreground/60 text-xs leading-relaxed'>
-                {t(
-                  'Supports one-click configuration and perfectly adapts to Microsslink multi-protocol configuration.'
-                )}
-              </p>
-            </div>
-            <div className='flex flex-wrap items-center gap-3'>
-              {/* Cherry Studio */}
-              <a
-                href='https://cherry-ai.com'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <CherryStudio.Color size={24} className='shrink-0' />
-                <span>Cherry Studio</span>
-              </a>
-
-              {/* CC Switch */}
-              <a
-                href='https://ccswitch.io'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <img
-                  src='https://ccswitch.io/favicon.png'
-                  alt='CC Switch'
-                  className='size-6 shrink-0 rounded-md object-contain'
-                  onError={(e) => {
-                    // Fallback to a styled text avatar if the remote favicon fails to load in sandbox or local environments
-                    e.currentTarget.style.display = 'none'
-                    const fallback = e.currentTarget.nextSibling as HTMLElement
-                    if (fallback) fallback.style.display = 'flex'
-                  }}
-                />
-                <span
-                  style={{ display: 'none' }}
-                  className='size-6 shrink-0 items-center justify-center rounded-md bg-blue-500/10 text-[10px] font-bold text-blue-600 dark:bg-blue-400/10 dark:text-blue-400'
-                >
-                  CC
-                </span>
-                <span>CC Switch</span>
-              </a>
-
-              {/* "更多" */}
-              <div className='group border-border/40 bg-muted/15 text-foreground/55 hover:border-border hover:bg-muted/30 hover:text-foreground flex cursor-default items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'>
-                <MoreIcon />
-                <span>{t('More Apps')}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Hero Terminal API Demo */}
-        <div
-          className='landing-animate-fade-up flex w-full justify-center opacity-0 lg:col-span-6'
-          style={{ animationDelay: '320ms' }}
+    /*
+     * The first screen is a deep-space backdrop, so it must render with the dark
+     * palette no matter which theme the visitor picked — otherwise the outline
+     * CTAs (transparent fill, theme-coloured label) disappear into the light
+     * theme's near-black text on a black photo.
+     *
+     * `dark` scopes the dark token set to this section and therefore also drives
+     * the `dark:` variants inside it; `bg-black` is the fallback that keeps the
+     * section opaque while the photo decodes (and if it ever fails to load),
+     * instead of showing `PublicLayout`'s near-white page background. The
+     * `data-hero-stage` hook lets the floating header keep its dark styling for
+     * as long as this stage still sits behind it.
+     */
+    <section
+      ref={stageRef}
+      data-hero-stage
+      className='dark hero-scroll-stage relative z-10 bg-black'
+    >
+      {/* Pinned screen: stays put for the whole travel distance. */}
+      <div className='sticky top-0 h-svh overflow-hidden'>
+        <motion.div
+          aria-hidden
+          className='pointer-events-none absolute inset-0'
+          style={backdropStyle}
         >
-          <HeroTerminalDemo className='mt-8 lg:mt-0' />
-        </div>
-      </Container>
+          <img
+            src='/home/hero-bg.png'
+            alt=''
+            draggable={false}
+            fetchPriority='high'
+            className='size-full object-cover object-center select-none'
+          />
+        </motion.div>
+
+        {/* Grid pattern, carried over from the previous hero for texture. */}
+        <div
+          aria-hidden
+          className='pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_40%_40%,black_20%,transparent_100%)] bg-[size:4rem_4rem] opacity-[0.06]'
+        />
+
+        {/* Left scrim keeps the copy legible over the bright halo. */}
+        <div
+          aria-hidden
+          className='pointer-events-none absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent'
+        />
+        {/* Bottom scrim dissolves the screen instead of cutting it off. */}
+        <div
+          aria-hidden
+          className='pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-black/70'
+        />
+
+        <motion.div
+          className='relative flex h-full items-center'
+          style={contentStyle}
+        >
+          <Container className='grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8'>
+            {/* Left Column: Title, description, action buttons and application support */}
+            <div className='flex flex-col items-start text-left lg:col-span-6'>
+              {/* Top Pill Badge */}
+              <div
+                className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1.5 text-[11px] font-medium text-blue-600 opacity-0 shadow-xs dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'
+                style={{ animationDelay: '0ms' }}
+              >
+                <span className='relative flex size-1.5'>
+                  <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75' />
+                  <span className='relative inline-flex size-1.5 rounded-full bg-blue-500 dark:bg-blue-400' />
+                </span>
+                <span>{t('Token Factory Era Has Arrived')}</span>
+              </div>
+
+              <motion.div style={titleStyle}>
+                <h1
+                  className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
+                  style={{ animationDelay: '60ms' }}
+                >
+                  {t('One API Gateway')}
+                  <br />
+                  <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
+                    {t('Every Model at Your Fingertips')}
+                  </span>
+                </h1>
+              </motion.div>
+
+              <div
+                className='landing-animate-fade-up mt-8 flex flex-wrap items-center gap-3 opacity-0'
+                style={{ animationDelay: '180ms' }}
+              >
+                {props.isAuthenticated ? (
+                  <>
+                    <Button
+                      size='xl'
+                      className='group'
+                      render={<Link to='/dashboard' />}
+                    >
+                      {t('Go to Dashboard')}
+                      <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+                    </Button>
+                    {renderDocsButton()}
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      size='xl'
+                      className='group'
+                      render={<Link to='/sign-up' />}
+                    >
+                      {t('Get Started')}
+                      <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+                    </Button>
+                    <Button
+                      variant='outline'
+                      size='xl'
+                      className='border-border/50 hover:border-border hover:bg-muted/50'
+                      render={<Link to='/pricing' />}
+                    >
+                      {t('View Pricing')}
+                    </Button>
+                    {renderDocsButton()}
+                  </>
+                )}
+              </div>
+
+              {/* AI Agents (只放 6 个精选，其余在「查看更多」弹窗里) */}
+              <HeroAgents />
+            </div>
+
+            {/* Right Column: Hero Terminal API Demo */}
+            <div
+              className='landing-animate-fade-up flex w-full justify-center opacity-0 lg:col-span-6'
+              style={{ animationDelay: '320ms' }}
+            >
+              <HeroTerminalDemo className='mt-8 lg:mt-0' />
+            </div>
+          </Container>
+        </motion.div>
+      </div>
     </section>
   )
 }

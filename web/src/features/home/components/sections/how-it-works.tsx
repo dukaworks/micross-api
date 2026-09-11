@@ -16,11 +16,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Settings, Zap, BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
 import { Container } from '@/components/layout'
+import { cn } from '@/lib/utils'
+
+import { SECTION_PY } from '../../constants'
 
 export function HowItWorks() {
   const { t } = useTranslation()
@@ -32,56 +34,67 @@ export function HowItWorks() {
       desc: t(
         'Add your API keys, set up channels and configure access permissions'
       ),
-      icon: <Settings className='size-6' strokeWidth={1.5} />,
+      image: '/home/step-1-configure.webp',
     },
     {
       num: '2',
       title: t('Connect'),
-      desc: t(
-        'Connect through OpenAI, Claude, Gemini, and other compatible API routes'
-      ),
-      icon: <Zap className='size-6' strokeWidth={1.5} />,
+      desc: t('Connect via OpenAI, Claude, Gemini and more'),
+      image: '/home/step-2-connect.webp',
     },
     {
       num: '3',
       title: t('Monitor'),
       desc: t('Track usage, costs and performance with real-time analytics'),
-      icon: <BarChart3 className='size-6' strokeWidth={1.5} />,
+      image: '/home/step-3-monitor.webp',
     },
-  ]
+  ] as const
 
   return (
-    <section className='border-border/40 relative z-10 border-t py-24 md:py-32'>
+    <section className={cn('border-border/40 relative z-10 border-t', SECTION_PY)}>
       <Container>
-        <AnimateInView className='mb-16 text-center md:mb-20'>
-          <p className='text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase'>
-            {t('How It Works')}
-          </p>
+        <AnimateInView className='mb-12 text-center md:mb-14'>
           <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
-            {t('Three steps to get started')}
+            {t('Three steps')}{' '}
+            <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
+              {t('to get started')}
+            </span>
           </h2>
         </AnimateInView>
 
-        <div className='grid gap-8 md:grid-cols-3 md:gap-12'>
+        <div className='grid gap-8 md:grid-cols-3 md:gap-10'>
           {steps.map((step, i) => (
             <AnimateInView
               key={step.num}
               delay={i * 150}
               animation='fade-up'
-              className='relative flex flex-col items-center text-center'
+              className='relative'
             >
-              <div className='relative mb-6'>
-                <div className='text-muted-foreground border-border/50 bg-muted/30 flex size-16 items-center justify-center rounded-2xl border transition-colors'>
-                  {step.icon}
+              <div className='group/step bg-card ring-foreground/10 relative overflow-hidden rounded-2xl shadow-card ring-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg'>
+                <div className='relative h-52 overflow-hidden md:h-56'>
+                  <img
+                    src={step.image}
+                    alt={step.title}
+                    loading='lazy'
+                    className='h-full w-full object-cover transition-transform duration-500 group-hover/step:scale-105'
+                  />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/5' />
+                  <div className='absolute inset-x-0 bottom-0 p-5'>
+                    <h3 className='text-2xl leading-tight font-bold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] md:text-3xl'>
+                      {step.title}
+                    </h3>
+                  </div>
                 </div>
-                <div className='bg-foreground text-background absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full text-xs font-bold'>
-                  {step.num}
-                </div>
+                <p className='text-muted-foreground px-5 py-5 text-sm leading-relaxed'>
+                  {step.desc}
+                </p>
               </div>
-              <h3 className='mb-2 text-base font-semibold'>{step.title}</h3>
-              <p className='text-muted-foreground max-w-[240px] text-sm leading-relaxed'>
-                {step.desc}
-              </p>
+
+              <div className='absolute -top-3 -right-2 z-10 flex size-12 items-center justify-center rounded-full bg-primary shadow-md md:-right-3'>
+                <span className='text-2xl leading-none font-black text-primary-foreground'>
+                  {step.num}
+                </span>
+              </div>
             </AnimateInView>
           ))}
         </div>

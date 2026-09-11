@@ -808,7 +808,7 @@ export function useChannelsColumns(
                   <Tooltip>
                     <TooltipTrigger
                       render={
-                        <span className='border-border bg-muted text-primary inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border' />
+                        <span className='bg-muted text-primary inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md' />
                       }
                     >
                       <MultiKeyModeIcon className='h-3 w-3' />

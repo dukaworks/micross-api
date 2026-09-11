@@ -22,6 +22,9 @@ import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+
+import { SECTION_PY } from '../../constants'
 
 interface CTAProps {
   className?: string
@@ -36,7 +39,7 @@ export function CTA(props: CTAProps) {
   }
 
   return (
-    <section className='relative z-10 overflow-hidden px-6 py-24 md:py-32'>
+    <section className={cn('relative z-10 overflow-hidden px-6', SECTION_PY)}>
       {/* Gradient mesh background */}
       <div
         aria-hidden
@@ -60,11 +63,6 @@ export function CTA(props: CTAProps) {
             {t('your AI integration?')}
           </span>
         </h2>
-        <p className='text-muted-foreground/80 mx-auto mt-5 max-w-md text-sm leading-relaxed md:text-base'>
-          {t(
-            'Deploy your own gateway and start routing requests through your configured upstream services.'
-          )}
-        </p>
         <div className='mt-8 flex items-center justify-center gap-3'>
           <Button className='group rounded-lg' render={<Link to='/sign-up' />}>
             {t('Get Started')}

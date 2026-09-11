@@ -58,6 +58,13 @@ export interface PublicHeaderProps {
   showNavigation?: boolean
   showAuthButtons?: boolean
   showNotifications?: boolean
+  /**
+   * Keeps the floating navigation on the dark palette while a full-bleed dark
+   * surface (the landing hero stage) still sits behind it. The surface opts in
+   * by rendering `data-hero-stage`; the dark tokens are dropped the moment it
+   * scrolls out of view.
+   */
+  overDarkHero?: boolean
   className?: string
 }
 
@@ -71,6 +78,7 @@ export function PublicHeader(props: PublicHeaderProps) {
     homeUrl = '/',
     showAuthButtons = true,
     showNotifications = true,
+    overDarkHero = false,
   } = props
 
   const { t } = useTranslation()
@@ -80,6 +88,13 @@ export function PublicHeader(props: PublicHeaderProps) {
     useState<AuthPromptTarget | null>(null)
   const [authPromptSecondsLeft, setAuthPromptSecondsLeft] =
     useState(AUTH_PROMPT_SECONDS)
+  /**
+   * Whether the floating header currently overlaps a dark full-bleed surface.
+   * Driven by `overDarkHero` + `[data-hero-stage]`, never by a scroll offset:
+   * the hero stage is pinned for an extra viewport, so only the stage's own
+   * geometry can tell when the header has cleared the dark backdrop.
+   */
+  const [overDarkSurface, setOverDarkSurface] = useState(false)
   const { auth } = useAuthStore()
   const {
     systemName,
@@ -96,6 +111,22 @@ export function PublicHeader(props: PublicHeaderProps) {
   const isAuthenticated = !!user
   const displaySiteName = customSiteName || systemName
   const links = dynamicLinks.length > 0 ? dynamicLinks : navLinks
+
+  useEffect(() => {
+    if (!overDarkHero) {
+      setOverDarkSurface(false)
+      return
+    }
+
+    const stage = document.querySelector('[data-hero-stage]')
+    if (!stage) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setOverDarkSurface(entry.isIntersecting)
+    })
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [overDarkHero])
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
@@ -167,7 +198,12 @@ export function PublicHeader(props: PublicHeaderProps) {
 
   return (
     <>
-      <header className='pointer-events-none fixed inset-x-0 top-0 z-50'>
+      <header
+        className={cn(
+          'pointer-events-none fixed inset-x-0 top-0 z-50',
+          overDarkSurface && 'dark'
+        )}
+      >
         <div className='pointer-events-auto mx-auto max-w-7xl px-4 md:px-6'>
           <nav className='flex h-16 items-center justify-between px-2'>
             {/* Logo */}

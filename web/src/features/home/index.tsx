@@ -25,7 +25,7 @@ import { useTheme } from '@/context/theme-provider'
 import { isLikelyHtml } from '@/lib/content-format'
 import { useAuthStore } from '@/stores/auth-store'
 
-import { CTA, Features, Hero, HowItWorks, Stats } from './components'
+import { CTA, Hero, HowItWorks, Promotions, Stats } from './components'
 import { useHomePageContent } from './hooks'
 
 export function Home() {
@@ -120,12 +120,17 @@ export function Home() {
   }
 
   return (
-    <PublicLayout container={false}>
+    <PublicLayout container={false} headerProps={{ overDarkHero: true }}>
       <Hero isAuthenticated={isAuthenticated} />
-      <Stats />
-      <Features />
-      <HowItWorks />
-      <CTA isAuthenticated={isAuthenticated} />
+      {/* Pulled up by one stage of travel so the whole page still advances
+          exactly one viewport as the hero transition plays. The matching
+          offset lives in `.hero-content-overlap` (styles/index.css). */}
+      <div className='bg-background hero-content-overlap relative z-20'>
+        <Stats />
+        <Promotions />
+        <HowItWorks />
+        <CTA isAuthenticated={isAuthenticated} />
+      </div>
     </PublicLayout>
   )
 }
