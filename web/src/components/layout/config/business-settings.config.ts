@@ -26,10 +26,10 @@ import {
   Users,
 } from 'lucide-react'
 
-import { getBillingSectionNavItems } from '@/features/system-settings/billing/section-registry.tsx'
-import { getContentSectionNavItems } from '@/features/system-settings/content/section-registry.tsx'
-import { getPoliciesSectionNavItems } from '@/features/system-settings/policies/section-registry.tsx'
-import { getSiteSectionNavItems } from '@/features/system-settings/site/section-registry.tsx'
+import { getBillingSectionNavItems } from '@/features/business-settings/billing/section-registry.tsx'
+import { getContentSectionNavItems } from '@/features/business-settings/content/section-registry.tsx'
+import { getPoliciesSectionNavItems } from '@/features/business-settings/policies/section-registry.tsx'
+import { getSiteSectionNavItems } from '@/features/business-settings/site/section-registry.tsx'
 import { ROLE } from '@/lib/roles'
 
 import type { NavGroup, SidebarView } from '../types'

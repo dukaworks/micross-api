@@ -47,7 +47,7 @@ export type ManagementAccessSection = {
  *
  * 分区与模块的 key 必须与 `@/hooks/use-sidebar-config` 的 URL_TO_CONFIG_MAP
  * 保持一致，否则这里的开关不会影响任何侧边栏入口。文案 key 与
- * `features/system-settings/maintenance/sidebar-modules-section.tsx` 复用同一批
+ * `features/business-settings/site/sections/sidebar-modules-section.tsx` 复用同一批
  * 翻译，保证全局配置与单用户配置的用语一致。
  */
 export const MANAGEMENT_ACCESS_SECTIONS: ManagementAccessSection[] = [
