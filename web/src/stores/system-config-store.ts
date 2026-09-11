@@ -42,6 +42,8 @@ export interface SystemConfig {
   systemName: string
   logo: string
   footerHtml?: string
+  /** ICP filing number shown in the footer; empty hides it */
+  icp?: string
   demoSiteEnabled?: boolean
   displayTokenStatEnabled?: boolean
   currency: CurrencyConfig

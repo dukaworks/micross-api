@@ -39,6 +39,7 @@ const SITE_SECTIONS = [
         defaultValues={{
           SystemName: settings.SystemName,
           Logo: settings.Logo,
+          Icp: settings.Icp,
           Footer: settings.Footer,
           About: settings.About,
           HomePageContent: settings.HomePageContent,

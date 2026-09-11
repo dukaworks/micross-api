@@ -28,6 +28,7 @@ const defaultSiteSettings: SiteSettings = {
   Notice: '',
   SystemName: 'Microsslink',
   Logo: '',
+  Icp: '',
   Footer: '',
   About: '',
   HomePageContent: '',

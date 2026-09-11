@@ -110,6 +110,7 @@ export type SiteSettings = {
   Notice: string
   SystemName: string
   Logo: string
+  Icp: string
   Footer: string
   About: string
   HomePageContent: string
