@@ -11,6 +11,13 @@ type GroupRatioInfo struct {
 	GroupRatio        float64
 	GroupSpecialRatio float64
 	HasSpecialRatio   bool
+
+	// 以下三个字段只描述「客户折扣」，不参与金额计算——折扣已经乘进 GroupRatio 了。
+	// 留着是为了「看得见」：对账时要能分清「分组倍率本来就是 0.8」与
+	// 「分组倍率 1.0 打了 8 折」，这两种情况 GroupRatio 是同一个数。
+	DiscountRatio  float64 // 客户折扣乘数，1 表示未打折
+	DiscountSource string  // 折扣来源（模型级／厂商级／方案基础折扣），未打折时为空
+	DiscountPlanId int     // 命中的折扣方案 id，未打折时为 0
 }
 
 type PriceData struct {

@@ -10,10 +10,18 @@ type DiscountSetting struct {
 	//
 	// 与折扣字段同一口径——字符串 decimal（禁 float），空串按 0 处理。
 	MinMarginRatio string `json:"min_margin_ratio"`
+
+	// EnableBillingDiscount 是「折扣是否参与实际扣费」的总开关。
+	//
+	// 默认 false：折扣只做配置与试算，扣费仍按官方标价——这样折扣方案可以
+	// 先建好、先在界面上试算比对，确认无误后再打开开关放量。
+	// 打开后也只对「绑定了启用中方案」的客户生效，其余人照旧原价。
+	EnableBillingDiscount bool `json:"enable_billing_discount"`
 }
 
 var discountSetting = DiscountSetting{
-	MinMarginRatio: "0",
+	MinMarginRatio:        "0",
+	EnableBillingDiscount: false,
 }
 
 func init() {

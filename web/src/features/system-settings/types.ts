@@ -368,6 +368,7 @@ export type OperationsSettings = {
   'perf_metrics_setting.bucket_time': 'hour' | 'minute' | '5min'
   'perf_metrics_setting.retention_days': number
   'discount_setting.min_margin_ratio': string
+  'discount_setting.enable_billing_discount': boolean
 }
 
 export type SecuritySettings = {

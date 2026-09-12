@@ -34,15 +34,19 @@ vi.mock('../../hooks/use-update-option', () => ({
 const MARGIN_LABEL = 'Minimum Margin Ratio'
 const MARGIN_INVALID_MESSAGE =
   'Enter a number between 0 and 1 with up to 6 decimal places, or leave empty'
+const BILLING_LABEL = 'Apply discounts to billing'
 
-const renderSection = (marginRatio: string) => {
+const renderSection = (marginRatio: string, billingDiscount = false) => {
   const queryClient = new QueryClient({
     defaultOptions: { mutations: { retry: false } },
   })
   const view = render(
     <QueryClientProvider client={queryClient}>
       <DiscountSettingSection
-        defaultValues={{ 'discount_setting.min_margin_ratio': marginRatio }}
+        defaultValues={{
+          'discount_setting.min_margin_ratio': marginRatio,
+          'discount_setting.enable_billing_discount': billingDiscount,
+        }}
       />
     </QueryClientProvider>
   )
@@ -60,6 +64,7 @@ describe('discount margin setting', () => {
     i18next.addResourceBundle('en', 'translation', {
       [MARGIN_LABEL]: MARGIN_LABEL,
       [MARGIN_INVALID_MESSAGE]: MARGIN_INVALID_MESSAGE,
+      [BILLING_LABEL]: BILLING_LABEL,
     })
   })
 
@@ -87,6 +92,42 @@ describe('discount margin setting', () => {
         value: '0',
       })
     )
+
+    queryClient.clear()
+  })
+
+  test('saves the billing switch turned on, on its own key', async () => {
+    const { queryClient, form } = renderSection('0', false)
+
+    fireEvent.click(screen.getByRole('switch', { name: BILLING_LABEL }))
+    fireEvent.submit(form)
+
+    await waitFor(() =>
+      expect(mutateAsync).toHaveBeenCalledWith({
+        key: 'discount_setting.enable_billing_discount',
+        value: true,
+      })
+    )
+
+    queryClient.clear()
+  })
+
+  test('leaves the billing switch untouched when only the margin changed', async () => {
+    const { queryClient, input, form } = renderSection('0.05', true)
+
+    fireEvent.change(input, { target: { value: '0.1' } })
+    fireEvent.submit(form)
+
+    await waitFor(() =>
+      expect(mutateAsync).toHaveBeenCalledWith({
+        key: 'discount_setting.min_margin_ratio',
+        value: '0.1',
+      })
+    )
+    expect(mutateAsync).not.toHaveBeenCalledWith({
+      key: 'discount_setting.enable_billing_discount',
+      value: true,
+    })
 
     queryClient.clear()
   })

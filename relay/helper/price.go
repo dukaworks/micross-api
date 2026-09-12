@@ -67,7 +67,9 @@ func HandleGroupRatio(ctx *gin.Context, relayInfo *relaycommon.RelayInfo) hostty
 		groupRatioInfo.GroupRatio = ratio_setting.GetGroupRatio(relayInfo.UsingGroup)
 	}
 
-	return groupRatioInfo
+	// 客户折扣：合进分组倍率（实现见 discount.go）。没绑方案的用户在这里原样返回，
+	// 于是预扣、重试重算、结算读到的都是同一个值。
+	return ApplyUserDiscountRatio(relayInfo, groupRatioInfo)
 }
 
 func ModelPriceHelper(c *gin.Context, info *relaycommon.RelayInfo, promptTokens int, meta *types.TokenCountMeta) (hosttypes.PriceData, error) {

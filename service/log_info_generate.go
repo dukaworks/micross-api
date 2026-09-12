@@ -69,6 +69,24 @@ func appendRequestPath(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, other
 	}
 }
 
+// appendDiscountInfo 把「客户折扣」写进消费日志的 other 里。
+//
+// 折扣已经乘进 group_ratio，所以没打折时这里什么都不写——老日志的形状一个字都不变。
+// 打了折才多出三个字段：对账时要能分清「分组倍率本来就是 0.8」与「分组倍率 1.0 打了 8 折」，
+// 这两种情况 group_ratio 是同一个数。GenerateWssOtherInfo／GenerateAudioOtherInfo／
+// GenerateClaudeOtherInfo 都经由 GenerateTextOtherInfo，所以这一处即可覆盖。
+func appendDiscountInfo(other map[string]interface{}, groupRatioInfo hosttypes.GroupRatioInfo) {
+	if other == nil {
+		return
+	}
+	if groupRatioInfo.DiscountRatio == 0 || groupRatioInfo.DiscountRatio == 1 {
+		return
+	}
+	other["discount_ratio"] = groupRatioInfo.DiscountRatio
+	other["discount_source"] = groupRatioInfo.DiscountSource
+	other["discount_plan_id"] = groupRatioInfo.DiscountPlanId
+}
+
 func GenerateTextOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, modelRatio, groupRatio, completionRatio float64,
 	cacheTokens int, cacheRatio float64, modelPrice float64, userGroupRatio float64) map[string]interface{} {
 	other := make(map[string]interface{})
@@ -79,6 +97,7 @@ func GenerateTextOtherInfo(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, m
 	other["cache_ratio"] = cacheRatio
 	other["model_price"] = modelPrice
 	other["user_group_ratio"] = userGroupRatio
+	appendDiscountInfo(other, relayInfo.PriceData.GroupRatioInfo)
 	other["frt"] = float64(relayInfo.FirstResponseTime.UnixMilli() - relayInfo.StartTime.UnixMilli())
 	if relayInfo.ReasoningEffort != "" {
 		other["reasoning_effort"] = relayInfo.ReasoningEffort
@@ -297,6 +316,7 @@ func GenerateMjOtherInfo(relayInfo *relaycommon.RelayInfo, priceData hosttypes.P
 	if priceData.GroupRatioInfo.HasSpecialRatio {
 		other["user_group_ratio"] = priceData.GroupRatioInfo.GroupSpecialRatio
 	}
+	appendDiscountInfo(other, priceData.GroupRatioInfo)
 	appendRequestPath(nil, relayInfo, other)
 	return other
 }

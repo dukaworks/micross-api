@@ -61,6 +61,8 @@ const OPERATIONS_SECTIONS = [
         defaultValues={{
           'discount_setting.min_margin_ratio':
             settings['discount_setting.min_margin_ratio'] ?? '0',
+          'discount_setting.enable_billing_discount':
+            settings['discount_setting.enable_billing_discount'] ?? false,
         }}
       />
     ),

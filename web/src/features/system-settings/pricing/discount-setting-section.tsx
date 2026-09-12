@@ -33,25 +33,33 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 
-import { SettingsForm } from '../components/settings-form-layout'
+import {
+  SettingsForm,
+  SettingsSwitchContent,
+  SettingsSwitchItem,
+} from '../components/settings-form-layout'
 import { SettingsPageFormActions } from '../components/settings-page-context'
 import { SettingsSection } from '../components/settings-section'
 import { useResetForm } from '../hooks/use-reset-form'
 import { useUpdateOption } from '../hooks/use-update-option'
 
 /**
- * 折扣策略：目前只有一个键 `discount_setting.min_margin_ratio`（毛利底线，默认 0）。
+ * 折扣策略：两个键。
  *
- * 试算与保存前校验用它判断一条线路会不会亏：进货折扣高于
- * 「客户折扣 − 毛利底线」时标红。填 0 表示不赔本就行。
+ * - `discount_setting.min_margin_ratio`（毛利底线，默认 0）：试算与保存前校验用它判断
+ *   一条线路会不会亏——进货折扣高于「客户折扣 − 毛利底线」时标红。填 0 表示不赔本就行。
+ * - `discount_setting.enable_billing_discount`（默认关）：折扣是否参与实际扣费。
+ *   关着时折扣只用于配置与试算，每笔仍按官方标价收费；打开后也只对「绑定了启用中方案」
+ *   的客户生效，没绑方案的人照旧。
  *
  * 表单内部刻意不使用带点的服务端键名——react-hook-form 7 会把带点的 name
  * 解释成嵌套路径，导致表单状态与校验、落库的键名不一致。这里用本地字段名
- * 建模，保存前才摊平成 `discount_setting.min_margin_ratio`
+ * 建模，保存前才摊平成 `discount_setting.*`
  * （同样的取舍见 maintenance/performance-section.tsx 的注释）。
  */
-const createMarginRatioSchema = (t: (key: string) => string) =>
+const createDiscountSettingSchema = (t: (key: string) => string) =>
   z.object({
     min_margin_ratio: z.string().refine((value) => {
       const trimmed = value.trim()
@@ -61,18 +69,22 @@ const createMarginRatioSchema = (t: (key: string) => string) =>
       // 所以上界必须在这里再判一遍。
       return Number(trimmed) <= 1
     }, t('Enter a number between 0 and 1 with up to 6 decimal places, or leave empty')),
+    enable_billing_discount: z.boolean(),
   })
 
-type MarginRatioFormValues = z.infer<
-  ReturnType<typeof createMarginRatioSchema>
+type DiscountSettingFormValues = z.infer<
+  ReturnType<typeof createDiscountSettingSchema>
 >
 
 type FlatDiscountDefaults = {
   'discount_setting.min_margin_ratio': string
+  'discount_setting.enable_billing_discount': boolean
 }
 
 const buildFormDefaults = (defaults: FlatDiscountDefaults) => ({
   min_margin_ratio: defaults['discount_setting.min_margin_ratio'] ?? '',
+  enable_billing_discount:
+    defaults['discount_setting.enable_billing_discount'] ?? false,
 })
 
 type DiscountSettingSectionProps = {
@@ -88,17 +100,19 @@ export function DiscountSettingSection(props: DiscountSettingSectionProps) {
     [props.defaultValues]
   )
 
-  const form = useForm<MarginRatioFormValues>({
-    resolver: zodResolver(createMarginRatioSchema(t)),
+  const form = useForm<DiscountSettingFormValues>({
+    resolver: zodResolver(createDiscountSettingSchema(t)),
     defaultValues: formDefaults,
   })
 
   useResetForm(form, formDefaults)
 
-  const onSubmit = async (values: MarginRatioFormValues) => {
+  const onSubmit = async (values: DiscountSettingFormValues) => {
     // 留空与 0 同义：后端把空串也当 0 处理，这里统一成 "0" 少一种落库形态。
     const normalized: FlatDiscountDefaults = {
       'discount_setting.min_margin_ratio': values.min_margin_ratio.trim() || '0',
+      'discount_setting.enable_billing_discount':
+        values.enable_billing_discount,
     }
     const changedKeys = (
       Object.keys(normalized) as Array<keyof FlatDiscountDefaults>
@@ -122,6 +136,29 @@ export function DiscountSettingSection(props: DiscountSettingSectionProps) {
             onSave={form.handleSubmit(onSubmit)}
             isSaving={updateOption.isPending}
           />
+          <FormField
+            control={form.control}
+            name='enable_billing_discount'
+            render={({ field }) => (
+              <SettingsSwitchItem>
+                <SettingsSwitchContent>
+                  <FormLabel>{t('Apply discounts to billing')}</FormLabel>
+                  <FormDescription>
+                    {t(
+                      'When off, discount plans only drive simulation and pre-save checks and every request is billed at the official price. When on, customers bound to an enabled plan are billed at the discounted price.'
+                    )}
+                  </FormDescription>
+                </SettingsSwitchContent>
+                <FormControl>
+                  <Switch
+                    checked={field.value ?? false}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </SettingsSwitchItem>
+            )}
+          />
+
           <div>
             <h4 className='font-medium'>{t('Profit Floor')}</h4>
             <p className='text-muted-foreground mt-1 text-xs'>

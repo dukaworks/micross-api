@@ -121,6 +121,12 @@ func PreWssConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, usag
 		actualGroupRatio = userGroupRatio
 	}
 
+	// 客户折扣：实时流式预扣是自己算的分组倍率，不走 HandleGroupRatio，折扣在这儿补一次。
+	// 口径与主链路一致——同一个 ResolveBillingDiscount，同一份乘数。
+	if discount := model.ResolveBillingDiscount(relayInfo.UserId, modelName); discount.Applied() {
+		actualGroupRatio = actualGroupRatio * discount.Ratio
+	}
+
 	quotaInfo := QuotaInfo{
 		InputDetails: TokenDetails{
 			TextTokens:  textInputTokens,

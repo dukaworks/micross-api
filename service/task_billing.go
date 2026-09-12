@@ -319,6 +319,12 @@ func RecalculateTaskQuotaByTokens(ctx context.Context, task *model.Task, totalTo
 		finalGroupRatio = groupRatio
 	}
 
+	// 客户折扣：任务 token 重算是异步路径，自己从分组设置取倍率，折扣在这儿补一次。
+	// 漏了这一步的后果是「预扣打了折、重算又按原价补扣回去」——账面上等于没打折。
+	if discount := model.ResolveBillingDiscount(task.UserId, modelName); discount.Applied() {
+		finalGroupRatio = finalGroupRatio * discount.Ratio
+	}
+
 	// 计算 OtherRatios 乘积（视频折扣、时长等）
 	otherMultiplier := 1.0
 	if priceData := taskBillingContextPriceData(task.PrivateData.BillingContext); priceData != nil {

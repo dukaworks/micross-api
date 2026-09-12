@@ -57,6 +57,7 @@ const defaultOperationsSettings: OperationsSettings = {
   'perf_metrics_setting.bucket_time': 'hour',
   'perf_metrics_setting.retention_days': 0,
   'discount_setting.min_margin_ratio': '0',
+  'discount_setting.enable_billing_discount': false,
 }
 
 export function OperationsSettings() {
