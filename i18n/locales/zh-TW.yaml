@@ -172,9 +172,9 @@ model.get_failed: "獲取上游模型失敗"
 model.reset_success: "重置模型倍率成功"
 
 # Vendor messages
-vendor.name_empty: "供應商名稱不能為空"
-vendor.name_exists: "供應商名稱已存在"
-vendor.id_missing: "缺少供應商 ID"
+vendor.name_empty: "廠商名稱不能為空"
+vendor.name_exists: "廠商名稱已存在"
+vendor.id_missing: "缺少廠商 ID"
 
 # Group messages
 group.name_type_empty: "組名稱和類型不能為空"
