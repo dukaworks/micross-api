@@ -3692,6 +3692,30 @@ export function ChannelMutateDrawer({
                                   </FormItem>
                                 )}
                               />
+
+                              <FormField
+                                control={form.control}
+                                name='cost_ratio'
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>{t('Cost Ratio')}</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type='number'
+                                        min='0'
+                                        max='1'
+                                        step='0.000001'
+                                        placeholder={t('Not set')}
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormDescription>
+                                      {t(FIELD_DESCRIPTIONS.COST_RATIO)}
+                                    </FormDescription>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             </div>
 
                             <FormField

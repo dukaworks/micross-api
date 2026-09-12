@@ -627,6 +627,10 @@ func AddChannel(c *gin.Context) {
 	}
 
 	addChannelRequest.Channel.CreatedTime = common.GetTimestamp()
+	// 新建时就录了进货折扣的，把修改时间一起落上。
+	if addChannelRequest.Channel.CostRatio != nil && strings.TrimSpace(*addChannelRequest.Channel.CostRatio) != "" {
+		addChannelRequest.Channel.CostUpdatedAt = common.GetTimestamp()
+	}
 	keys := make([]string, 0)
 	switch addChannelRequest.Mode {
 	case "multi_to_single":
@@ -1083,6 +1087,10 @@ func UpdateChannel(c *gin.Context) {
 			// 覆盖模式：直接使用新密钥（默认行为，不需要特殊处理）
 		}
 	}
+	// 进货折扣只在真的变了的时候刷修改时间——只改个备注不该动它。
+	if channel.CostRatio != nil && !equalStringPtr(channel.CostRatio, originChannel.CostRatio) {
+		channel.CostUpdatedAt = common.GetTimestamp()
+	}
 	err = channel.Update()
 	if err != nil {
 		common.ApiError(c, err)
@@ -1096,6 +1104,9 @@ func UpdateChannel(c *gin.Context) {
 	changedFields := make([]string, 0)
 	if channel.Models != originChannel.Models {
 		changedFields = append(changedFields, "models")
+	}
+	if !equalStringPtr(channel.CostRatio, originChannel.CostRatio) {
+		changedFields = append(changedFields, "cost_ratio")
 	}
 	if channel.Group != originChannel.Group {
 		changedFields = append(changedFields, "group")

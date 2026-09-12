@@ -55,6 +55,14 @@ type Channel struct {
 
 	OtherSettings string `json:"settings" gorm:"column:settings"` // 其他设置，存储azure版本等不需要检索的信息，详见dto.ChannelOtherSettings
 
+	// 进货折扣：这条上游线路的进货价，按「平台标价」折算，不是上游报价单上的数字。
+	// 走字符串 decimal（禁 float）。用指针是为了让 Update() 的 Updates(channel) 能区分
+	// 「请求没带这个字段」（nil，保持原值）和「显式清空」（&""）——值类型两者都会是空串。
+	// 列类型用 varchar 而不是 decimal(10,6)：channels 是核心大表，SQLite 下 decimal 列比对
+	// 判不出相等，会让每次启动都整表重建，代价太大（折扣三表能豁免是因为它们建表后不再迁移）。
+	CostRatio     *string `json:"cost_ratio" gorm:"type:varchar(20)"`
+	CostUpdatedAt int64   `json:"cost_updated_at" gorm:"bigint;default:0"`
+
 	// cache info
 	Keys []string `json:"-" gorm:"-"`
 }

@@ -23,9 +23,19 @@ import { WorkerSettingsSection } from '../integrations/worker-settings-section'
 import { LogSettingsSection } from '../maintenance/log-settings-section'
 import { PerformanceSection } from '../maintenance/performance-section'
 import { UpdateCheckerSection } from '../maintenance/update-checker-section'
+import { DiscountSettingSection } from '../pricing/discount-setting-section'
 import type { OperationsSettings } from '../types'
 import { createSectionRegistry } from '../utils/section-registry'
-import { Bell, Cog, Download, FileText, Gauge, HardDrive, Mail } from 'lucide-react'
+import {
+  Bell,
+  Cog,
+  Download,
+  FileText,
+  Gauge,
+  HardDrive,
+  Mail,
+  Percent,
+} from 'lucide-react'
 
 const OPERATIONS_SECTIONS = [
   {
@@ -38,6 +48,19 @@ const OPERATIONS_SECTIONS = [
           DefaultCollapseSidebar: settings.DefaultCollapseSidebar,
           DemoSiteEnabled: settings.DemoSiteEnabled,
           SelfUseModeEnabled: settings.SelfUseModeEnabled,
+        }}
+      />
+    ),
+  },
+  {
+    id: 'discount',
+    titleKey: 'Discount Policy',
+    icon: Percent,
+    build: (settings: OperationsSettings) => (
+      <DiscountSettingSection
+        defaultValues={{
+          'discount_setting.min_margin_ratio':
+            settings['discount_setting.min_margin_ratio'] ?? '0',
         }}
       />
     ),
