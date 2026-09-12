@@ -22,6 +22,7 @@
     "Add rule": "Add rule",
     "Administration": "Administration",
     "Advanced with the GAC Department of Science and Technology and Information Center": "Advanced with the GAC Department of Science and Technology and Information Center",
+    "Agent": "Agent",
     "Agent user ID": "Agent user ID",
     "An agent-owned plan needs the agent user ID": "An agent-owned plan needs the agent user ID",
     "Announcements, API addresses, FAQ, status page, and presets.": "Announcements, API addresses, FAQ, status page, and presets.",
@@ -2333,6 +2334,7 @@
     "Forwarding Routes": "Route chuyển tiếp",
     "Frames per second": "Khung hình / giây",
     "Free": "Trống",
+    "Free of charge": "Free of charge",
     "Free: {{free}} / Total: {{total}}": "Còn trống: {{free}} / Tổng: {{total}}",
     "Frequency Penalty": "Phạt tần suất",
     "Friendly name to identify this channel": "Tên thân thiện để nhận dạng kênh này",
@@ -3663,6 +3665,7 @@
     "Plan Title": "Tiêu đề gói",
     "Plan title is required": "Tiêu đề gói là bắt buộc",
     "Planned maintenance on Friday at 22:00 UTC...": "Bảo trì theo kế hoạch vào thứ Sáu lúc 22:00 UTC...",
+    "Plan billing mode": "Plan billing mode",
     "Platform": "Nền tảng",
     "Playground": "Sân chơi",
     "Playground and chat functions": "Chức năng sân chơi và trò chuyện",
@@ -5595,6 +5598,12 @@
     "ByteDance everyday assistant: anyone can start.": "ByteDance everyday assistant: anyone can start.",
     "Tencent Yuanbao, the AI helper inside WeChat.": "Tencent Yuanbao, the AI helper inside WeChat.",
     "Alibaba Qwen: long-form Chinese is its home turf.": "Alibaba Qwen: long-form Chinese is its home turf.",
-    "Tencent desktop AI assistant: chores, delegated.": "Tencent desktop AI assistant: chores, delegated."
+    "Tencent desktop AI assistant: chores, delegated.": "Tencent desktop AI assistant: chores, delegated.",
+    "Manual": "Manual",
+    "Migration": "Migration",
+    "Customer code": "Customer code",
+    "A model name or a vendor name, e.g. claude-3-5-sonnet or anthropic": "A model name or a vendor name, e.g. claude-3-5-sonnet or anthropic",
+    "The first matching rule wins; the highest priority is checked first.": "The first matching rule wins; the highest priority is checked first.",
+    "Create a discount plan to give one customer a different price than the official one.": "Create a discount plan to give one customer a different price than the official one."
   }
 }

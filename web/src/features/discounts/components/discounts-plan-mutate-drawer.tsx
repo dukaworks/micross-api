@@ -49,6 +49,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { handleServerError } from '@/lib/handle-server-error'
 
 import {
@@ -253,26 +254,29 @@ export function DiscountsPlanMutateDrawer({
 
             <div className='space-y-2'>
               <Label>{t('Owner')}</Label>
-              <Select
-                items={ownerOptions}
-                value={values.owner_type}
-                onValueChange={(value) =>
-                  setField('owner_type', String(value ?? ''))
-                }
+              <ToggleGroup
+                value={[values.owner_type]}
+                onValueChange={(value) => {
+                  // 单选：点已选中的那项等于取消，忽略掉。
+                  const next = value.find((item) => item !== values.owner_type)
+                  if (next) setField('owner_type', next)
+                }}
+                aria-label={t('Owner')}
+                variant='outline'
+                size='lg'
+                spacing={2}
+                className='grid w-full grid-cols-2 gap-2'
               >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder={t('Owner')} />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false}>
-                  <SelectGroup>
-                    {ownerOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                {ownerOptions.map((option) => (
+                  <ToggleGroupItem
+                    key={option.value}
+                    value={option.value}
+                    className='h-auto min-h-10 w-full'
+                  >
+                    {option.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </div>
 
             {values.owner_type === DISCOUNT_OWNER.AGENT && (
@@ -294,41 +298,42 @@ export function DiscountsPlanMutateDrawer({
                 {errors.owner_id && (
                   <p className='text-destructive text-xs'>{errors.owner_id}</p>
                 )}
-                <p className='text-muted-foreground text-xs'>
-                  {t(
-                    'The user ID of the agent who owns this plan; its revenue share is booked to that agent.'
-                  )}
-                </p>
               </div>
             )}
 
             <div className='space-y-2'>
               <Label>{t('Status')}</Label>
-              <Select
-                items={statusOptions}
-                value={String(values.status)}
-                onValueChange={(value) =>
+              <ToggleGroup
+                value={[String(values.status)]}
+                onValueChange={(value) => {
+                  // 单选：点已选中的那项等于取消，忽略掉。
+                  const next = value.find(
+                    (item) => item !== String(values.status)
+                  )
+                  if (next === undefined) return
                   setField(
                     'status',
-                    Number(value) === DISCOUNT_PLAN_STATUS.DISABLED
+                    Number(next) === DISCOUNT_PLAN_STATUS.DISABLED
                       ? DISCOUNT_PLAN_STATUS.DISABLED
                       : DISCOUNT_PLAN_STATUS.ENABLED
                   )
-                }
+                }}
+                aria-label={t('Status')}
+                variant='outline'
+                size='lg'
+                spacing={2}
+                className='grid w-full grid-cols-2 gap-2'
               >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder={t('Status')} />
-                </SelectTrigger>
-                <SelectContent alignItemWithTrigger={false}>
-                  <SelectGroup>
-                    {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                {statusOptions.map((option) => (
+                  <ToggleGroupItem
+                    key={option.value}
+                    value={option.value}
+                    className='h-auto min-h-10 w-full'
+                  >
+                    {option.label}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
             </div>
           </SideDrawerSection>
 
@@ -379,7 +384,7 @@ export function DiscountsPlanMutateDrawer({
             </div>
 
             <div className='space-y-2'>
-              <Label>{t('Billing mode')}</Label>
+              <Label>{t('Plan billing mode')}</Label>
               <Select
                 items={billingModeOptions}
                 value={values.billing_mode}
@@ -388,7 +393,7 @@ export function DiscountsPlanMutateDrawer({
                 }
               >
                 <SelectTrigger className='w-full'>
-                  <SelectValue placeholder={t('Billing mode')} />
+                  <SelectValue placeholder={t('Plan billing mode')} />
                 </SelectTrigger>
                 <SelectContent alignItemWithTrigger={false}>
                   <SelectGroup>
@@ -407,23 +412,25 @@ export function DiscountsPlanMutateDrawer({
               </p>
             </div>
 
-            <div className='space-y-2'>
-              <Label htmlFor='discount-plan-commission'>
-                {t('Commission ratio')}
-              </Label>
-              <Input
-                id='discount-plan-commission'
-                value={values.commission_ratio}
-                onChange={(event) =>
-                  setField('commission_ratio', event.target.value)
-                }
-              />
-              {errors.commission_ratio && (
-                <p className='text-destructive text-xs'>
-                  {errors.commission_ratio}
-                </p>
-              )}
-            </div>
+            {values.owner_type === DISCOUNT_OWNER.AGENT && (
+              <div className='space-y-2'>
+                <Label htmlFor='discount-plan-commission'>
+                  {t('Commission ratio')}
+                </Label>
+                <Input
+                  id='discount-plan-commission'
+                  value={values.commission_ratio}
+                  onChange={(event) =>
+                    setField('commission_ratio', event.target.value)
+                  }
+                />
+                {errors.commission_ratio && (
+                  <p className='text-destructive text-xs'>
+                    {errors.commission_ratio}
+                  </p>
+                )}
+              </div>
+            )}
           </SideDrawerSection>
 
           <SideDrawerSection>

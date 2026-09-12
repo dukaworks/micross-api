@@ -107,7 +107,7 @@ export function useDiscountsColumns(): ColumnDef<DiscountPlan>[] {
     },
     {
       accessorKey: 'billing_mode',
-      header: t('Billing mode'),
+      header: t('Plan billing mode'),
       meta: { mobileHidden: true },
       cell: ({ row }) =>
         getDiscountBillingModeLabel(t, row.getValue('billing_mode') as string),

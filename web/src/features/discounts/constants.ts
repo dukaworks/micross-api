@@ -126,11 +126,11 @@ export const DISCOUNT_OWNER_LABEL_KEYS: Record<string, string> = {
   [DISCOUNT_OWNER.AGENT]: 'Agent',
 }
 
-/** 计费模式 → i18n 键 */
+/** 计费模式 → i18n 键；注意 "Free" 已被磁盘空间占用，这里另起一个键。 */
 export const DISCOUNT_BILLING_MODE_LABEL_KEYS: Record<string, string> = {
   [DISCOUNT_BILLING_MODE.USAGE]: 'Per usage',
   [DISCOUNT_BILLING_MODE.SUBSCRIPTION]: 'Subscription',
-  [DISCOUNT_BILLING_MODE.FREE]: 'Free',
+  [DISCOUNT_BILLING_MODE.FREE]: 'Free of charge',
 }
 
 /** 绑定来源 → i18n 键 */
@@ -225,13 +225,16 @@ export function getDiscountOwnerOptions(t: TFunction) {
   ]
 }
 
-/** 计费模式下拉项。 */
+/**
+ * 计费模式下拉项。
+ * 文案统一走 `getDiscountBillingModeLabel`，免得下拉和表格各写一份再走散。
+ */
 export function getDiscountBillingModeOptions(t: TFunction) {
   return [
-    { label: t('Per usage'), value: DISCOUNT_BILLING_MODE.USAGE },
-    { label: t('Subscription'), value: DISCOUNT_BILLING_MODE.SUBSCRIPTION },
-    { label: t('Free'), value: DISCOUNT_BILLING_MODE.FREE },
-  ]
+    DISCOUNT_BILLING_MODE.USAGE,
+    DISCOUNT_BILLING_MODE.SUBSCRIPTION,
+    DISCOUNT_BILLING_MODE.FREE,
+  ].map((value) => ({ label: getDiscountBillingModeLabel(t, value), value }))
 }
 
 /** 规则范围下拉项。 */
