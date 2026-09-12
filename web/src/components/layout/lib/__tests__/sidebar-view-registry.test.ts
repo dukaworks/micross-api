@@ -31,6 +31,7 @@ describe('sidebar view resolution', () => {
       '/users/42',
       '/redemption-codes',
       '/subscriptions',
+      '/discounts',
     ]) {
       expect(resolveSidebarView(pathname, ROLE.ADMIN)?.id).toBe(
         'business-settings'

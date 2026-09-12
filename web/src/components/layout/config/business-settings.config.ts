@@ -22,6 +22,7 @@ import {
   CalendarDays,
   CreditCard,
   Layout,
+  Percent,
   Plug,
   Server,
   Settings,
@@ -84,6 +85,11 @@ function getBusinessSettingsNavGroups(t: TFunction): NavGroup[] {
               url: '/subscriptions',
               icon: CalendarDays,
             },
+            {
+              title: t('Discount Plans'),
+              url: '/discounts',
+              icon: Percent,
+            },
           ],
         },
         {
@@ -130,7 +136,7 @@ function getBusinessSettingsNavGroups(t: TFunction): NavGroup[] {
 export const BUSINESS_SETTINGS_VIEW: SidebarView = {
   id: 'business-settings',
   pathPattern:
-    /^\/(business-settings|users|redemption-codes|subscriptions|channels|models)(\/|$)/,
+    /^\/(business-settings|users|redemption-codes|subscriptions|discounts|channels|models)(\/|$)/,
   requiredRole: ROLE.ADMIN,
   parent: {
     to: '/dashboard/overview',
