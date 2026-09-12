@@ -202,6 +202,9 @@ func SetApiRouter(router *gin.Engine) {
 			discountAdminRoute.GET("/bindings", controller.GetDiscountBindings)
 			discountAdminRoute.POST("/bindings", controller.CreateDiscountBinding)
 			discountAdminRoute.DELETE("/bindings/:id", controller.DeleteDiscountBinding)
+
+			// 试算：某客户 + 某模型按几折、走哪些线路、每条赚多少。只读，不落库。
+			discountAdminRoute.GET("/simulate", controller.SimulateDiscount)
 		}
 
 		// Subscription payment callbacks (no auth)
