@@ -24,9 +24,7 @@ import type { DiscountSimulateResult } from '../../types'
 const i18n = (await import('i18next')).default
 const { I18nextProvider, initReactI18next } = await import('react-i18next')
 const { api } = await import('@/lib/api')
-const { DiscountsSimulateDrawer } = await import(
-  '../discounts-simulate-drawer'
-)
+const { DiscountsSimulateDrawer } = await import('../discounts-simulate-drawer')
 
 await i18n.use(initReactI18next).init({
   lng: 'en',
@@ -144,7 +142,9 @@ function submitSimulation(modelName: string | null = 'gpt-4o'): void {
       { target: { value: modelName } }
     )
   }
-  const form = document.querySelector<HTMLFormElement>('#discount-simulate-form')
+  const form = document.querySelector<HTMLFormElement>(
+    '#discount-simulate-form'
+  )
   if (!form) throw new Error('Expected the simulation form')
   fireEvent.submit(form)
 }

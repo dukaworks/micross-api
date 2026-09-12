@@ -16,27 +16,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-export {
-  RATIO_UNKNOWN_TEXT,
-  parseRatioText,
-  formatRatioText,
-  formatMarginText,
-} from './format'
-export { normalizeRatioInput, ratioTextToInput } from './ratio'
-export {
-  DISCOUNT_PLAN_FORM_DEFAULT_VALUES,
-  DISCOUNT_PLAN_NAME_MAX_LENGTH,
-  DISCOUNT_PLAN_REMARK_MAX_LENGTH,
-  buildDiscountPlanPayload,
-  getDiscountPlanFormSchema,
-  transformDiscountPlanToFormDefaults,
-  type DiscountPlanFormValues,
-} from './plan-form'
-export {
-  DISCOUNT_RULE_FORM_DEFAULT_VALUES,
-  DISCOUNT_RULE_SCOPE_VALUE_MAX_LENGTH,
-  buildDiscountRulePayload,
-  getDiscountRuleFormSchema,
-  transformDiscountRuleToFormDefaults,
-  type DiscountRuleFormValues,
-} from './rule-form'
+import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+
+import { Button } from '@/components/ui/button'
+
+import { useDiscounts } from './discounts-provider'
+
+export function DiscountsPrimaryButtons() {
+  const { t } = useTranslation()
+  const { setOpen } = useDiscounts()
+
+  return (
+    <Button className='space-x-1' onClick={() => setOpen('create')}>
+      <span>{t('New plan')}</span> <Plus size={18} />
+    </Button>
+  )
+}

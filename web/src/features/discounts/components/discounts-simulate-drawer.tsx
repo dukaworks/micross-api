@@ -341,8 +341,7 @@ export function DiscountsSimulateDrawer({
                     {' · '}
                     {result.resolution.matched_rule.scope_value}
                     {' · '}
-                    {t('Priority')}{' '}
-                    {result.resolution.matched_rule.priority}
+                    {t('Priority')} {result.resolution.matched_rule.priority}
                   </p>
                 )}
               </SideDrawerSection>

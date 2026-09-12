@@ -33,7 +33,15 @@ describe('discount ratio formatting', () => {
   })
 
   test('treats missing or unreadable values as unknown, never as zero', () => {
-    for (const broken of [null, undefined, '', '   ', 'abc', 'NaN', 'Infinity']) {
+    for (const broken of [
+      null,
+      undefined,
+      '',
+      '   ',
+      'abc',
+      'NaN',
+      'Infinity',
+    ]) {
       expect(parseRatioText(broken)).toBeNull()
       expect(formatRatioText(broken)).toBe(RATIO_UNKNOWN_TEXT)
       expect(formatMarginText(broken)).toBe(RATIO_UNKNOWN_TEXT)

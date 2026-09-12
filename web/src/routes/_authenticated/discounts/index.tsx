@@ -17,12 +17,27 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { z } from 'zod'
 
 import { Discounts } from '@/features/discounts'
+import {
+  DISCOUNT_OWNER_FILTER_VALUES,
+  DISCOUNT_STATUS_FILTER_VALUES,
+} from '@/features/discounts/constants'
 import { ROLE } from '@/lib/roles'
 import { useAuthStore } from '@/stores/auth-store'
 
 export const Route = createFileRoute('/_authenticated/discounts/')({
+  validateSearch: z.object({
+    page: z.number().optional().catch(1),
+    pageSize: z.number().optional().catch(20),
+    filter: z.string().optional().catch(''),
+    status: z.array(z.enum(DISCOUNT_STATUS_FILTER_VALUES)).optional().catch([]),
+    owner_type: z
+      .array(z.enum(DISCOUNT_OWNER_FILTER_VALUES))
+      .optional()
+      .catch([]),
+  }),
   beforeLoad: () => {
     const { auth } = useAuthStore.getState()
     if (!auth.user || auth.user.role < ROLE.ADMIN) {

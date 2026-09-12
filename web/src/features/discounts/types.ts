@@ -43,6 +43,44 @@ export const DISCOUNT_PLAN_STATUS = {
   ENABLED: 1,
 } as const
 
+/** 方案归属；对应 `model.DiscountOwner*`。 */
+export const DISCOUNT_OWNER = {
+  PLATFORM: 'platform',
+  AGENT: 'agent',
+} as const
+
+/** 计费模式；对应 `model.DiscountBilling*`。 */
+export const DISCOUNT_BILLING_MODE = {
+  USAGE: 'usage',
+  SUBSCRIPTION: 'subscription',
+  FREE: 'free',
+} as const
+
+/** 绑定主体；对应 `model.DiscountSubject*`。 */
+export const DISCOUNT_SUBJECT = {
+  USER: 'user',
+  AGENT: 'agent',
+} as const
+
+/** 绑定来源；对应 `model.DiscountSource*`。 */
+export const DISCOUNT_BINDING_SOURCE = {
+  MANUAL: 'manual',
+  SUBSCRIPTION: 'subscription',
+  CUSTOMER_CODE: 'customer_code',
+  MIGRATION: 'migration',
+} as const
+
+/**
+ * 保存前检查里后端给的原因码；对应 `service.DiscountViolationReason*`。
+ * 界面上认识的翻译成中文，没见过的原样显示。
+ */
+export const DISCOUNT_VIOLATION_REASON = {
+  BELOW_MIN_DISCOUNT: 'below_min_discount',
+  MIN_ABOVE_BASE: 'min_above_base',
+  COST_BREACH: 'cost_breach',
+  NO_CHANNEL: 'no_channel',
+} as const
+
 // ============================================================================
 // Simulation result (mirrors service.DiscountSimulateResult)
 // ============================================================================
@@ -145,4 +183,134 @@ export interface SearchCustomersResponse {
     page: number
     page_size: number
   }
+}
+
+// ============================================================================
+// Plans / Rules / Bindings (mirrors the model layer)
+// ============================================================================
+
+/** 分页返回的形状（后端 `common.PageInfo`）。 */
+export interface DiscountPage<T> {
+  items: T[]
+  total: number
+  page: number
+  page_size: number
+}
+
+export interface DiscountPlan {
+  id: number
+  name: string
+  owner_type: string
+  owner_id: number
+  /** 固定 6 位小数字符串，例如 `"0.300000"`。 */
+  base_discount: string
+  min_discount: string
+  billing_mode: string
+  commission_ratio: string
+  status: number
+  remark: string
+  created_at: number
+  updated_at: number
+}
+
+export interface DiscountRule {
+  id: number
+  plan_id: number
+  scope_type: string
+  scope_value: string
+  discount: string
+  priority: number
+  status: number
+  created_at: number
+  updated_at: number
+}
+
+export interface DiscountBinding {
+  id: number
+  subject_type: string
+  subject_id: number
+  plan_id: number
+  effective_from: number
+  effective_to: number
+  source: string
+  status: number
+  created_at: number
+  updated_at: number
+}
+
+/** 方案详情接口的返回：方案本身 + 它的全部规则。 */
+export interface DiscountPlanDetail {
+  plan: DiscountPlan
+  rules: DiscountRule[]
+}
+
+export interface DiscountPlanPayload {
+  name: string
+  owner_type: string
+  owner_id: number
+  base_discount: string
+  min_discount: string
+  billing_mode: string
+  commission_ratio: string
+  status: number
+  remark: string
+}
+
+export interface DiscountRulePayload {
+  scope_type: string
+  scope_value: string
+  discount: string
+  priority: number
+  status: number
+}
+
+export interface DiscountBindingPayload {
+  subject_type: string
+  subject_id: number
+  plan_id: number
+  effective_from: number
+  effective_to: number
+  source: string
+}
+
+export interface DiscountPlanListParams {
+  page?: number
+  page_size?: number
+  keyword?: string
+  owner_type?: string
+  status?: number
+}
+
+export interface DiscountBindingListParams {
+  page?: number
+  page_size?: number
+  subject_type?: string
+  subject_id?: number
+  plan_id?: number
+}
+
+export interface DiscountValidateParams {
+  userId?: number
+  channelId?: number
+}
+
+// ============================================================================
+// Pre-save validation (mirrors service.DiscountValidateResult)
+// ============================================================================
+
+export interface DiscountValidateViolation {
+  scope_type: string
+  scope_value: string
+  discount: string
+  reason: string
+  /** 后端原文说明；界面上不认识原因码时至少还能看这句。 */
+  detail: string
+  available_channels: string[]
+}
+
+export interface DiscountValidateResult {
+  passed: boolean
+  min_margin_ratio: string
+  violations: DiscountValidateViolation[]
+  warnings: string[]
 }

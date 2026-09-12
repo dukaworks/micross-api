@@ -20,8 +20,20 @@ import { api } from '@/lib/api'
 
 import type {
   ApiResponse,
+  DiscountBinding,
+  DiscountBindingListParams,
+  DiscountBindingPayload,
   DiscountCustomer,
+  DiscountPage,
+  DiscountPlan,
+  DiscountPlanDetail,
+  DiscountPlanListParams,
+  DiscountPlanPayload,
+  DiscountRule,
+  DiscountRulePayload,
   DiscountSimulateResult,
+  DiscountValidateParams,
+  DiscountValidateResult,
   SearchCustomersParams,
   SearchCustomersResponse,
   SimulateDiscountParams,
@@ -78,13 +90,148 @@ export async function searchCustomers(
     data: payload.data
       ? {
           ...payload.data,
-          items: items.map((item): DiscountCustomer => ({
-            id: item.id,
-            username: item.username,
-            display_name: item.display_name,
-            group: item.group,
-          })),
+          items: items.map(
+            (item): DiscountCustomer => ({
+              id: item.id,
+              username: item.username,
+              display_name: item.display_name,
+              group: item.group,
+            })
+          ),
         }
       : undefined,
   }
+}
+
+// ============================================================================
+// Plans
+// ============================================================================
+
+/** 方案列表；keyword 按方案名与备注模糊匹配。 */
+export async function getDiscountPlans(
+  params: DiscountPlanListParams = {}
+): Promise<ApiResponse<DiscountPage<DiscountPlan>>> {
+  const res = await api.get('/api/discount/admin/plans', { params })
+  return res.data
+}
+
+/** 方案详情：方案本身 + 它的全部规则（一次拿全，省一次请求）。 */
+export async function getDiscountPlan(
+  planId: number
+): Promise<ApiResponse<DiscountPlanDetail>> {
+  const res = await api.get(`/api/discount/admin/plans/${planId}`)
+  return res.data
+}
+
+export async function createDiscountPlan(
+  payload: DiscountPlanPayload
+): Promise<ApiResponse<DiscountPlan>> {
+  const res = await api.post('/api/discount/admin/plans', payload)
+  return res.data
+}
+
+export async function updateDiscountPlan(
+  planId: number,
+  payload: DiscountPlanPayload
+): Promise<ApiResponse<DiscountPlan>> {
+  const res = await api.put(`/api/discount/admin/plans/${planId}`, payload)
+  return res.data
+}
+
+/** 只改启用／停用，不动折扣与规则。 */
+export async function updateDiscountPlanStatus(
+  planId: number,
+  status: number
+): Promise<ApiResponse<DiscountPlan>> {
+  const res = await api.patch(`/api/discount/admin/plans/${planId}/status`, {
+    status,
+  })
+  return res.data
+}
+
+export async function deleteDiscountPlan(
+  planId: number
+): Promise<ApiResponse<null>> {
+  const res = await api.delete(`/api/discount/admin/plans/${planId}`)
+  return res.data
+}
+
+/**
+ * 保存前检查：这套折扣会不会亏。
+ * 只读接口——后端不写表、也不阻断保存，界面负责把话说清楚。
+ */
+export async function validateDiscountPlan(
+  planId: number,
+  params: DiscountValidateParams = {}
+): Promise<ApiResponse<DiscountValidateResult>> {
+  const body: { user_id?: number; channel_id?: number } = {}
+  if (params.userId) body.user_id = params.userId
+  if (params.channelId) body.channel_id = params.channelId
+  const res = await api.post(
+    `/api/discount/admin/plans/${planId}/validate`,
+    body
+  )
+  return res.data
+}
+
+// ============================================================================
+// Rules
+// ============================================================================
+
+export async function getDiscountRules(
+  planId: number
+): Promise<ApiResponse<DiscountRule[]>> {
+  const res = await api.get(`/api/discount/admin/plans/${planId}/rules`)
+  return res.data
+}
+
+export async function createDiscountRule(
+  planId: number,
+  payload: DiscountRulePayload
+): Promise<ApiResponse<DiscountRule>> {
+  const res = await api.post(
+    `/api/discount/admin/plans/${planId}/rules`,
+    payload
+  )
+  return res.data
+}
+
+export async function updateDiscountRule(
+  ruleId: number,
+  payload: DiscountRulePayload
+): Promise<ApiResponse<DiscountRule>> {
+  const res = await api.put(`/api/discount/admin/rules/${ruleId}`, payload)
+  return res.data
+}
+
+export async function deleteDiscountRule(
+  ruleId: number
+): Promise<ApiResponse<null>> {
+  const res = await api.delete(`/api/discount/admin/rules/${ruleId}`)
+  return res.data
+}
+
+// ============================================================================
+// Bindings
+// ============================================================================
+
+export async function getDiscountBindings(
+  params: DiscountBindingListParams = {}
+): Promise<ApiResponse<DiscountPage<DiscountBinding>>> {
+  const res = await api.get('/api/discount/admin/bindings', { params })
+  return res.data
+}
+
+export async function createDiscountBinding(
+  payload: DiscountBindingPayload
+): Promise<ApiResponse<DiscountBinding>> {
+  const res = await api.post('/api/discount/admin/bindings', payload)
+  return res.data
+}
+
+export async function deleteDiscountBinding(
+  bindingId: number
+): Promise<ApiResponse<null>> {
+  const res = await api.delete(`/api/discount/admin/bindings/${bindingId}`)
+  return res.data
 }

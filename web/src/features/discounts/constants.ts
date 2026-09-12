@@ -19,8 +19,14 @@ For commercial licensing, please contact support@quantumnous.com
 import type { TFunction } from 'i18next'
 
 import {
+  DISCOUNT_BILLING_MODE,
+  DISCOUNT_BINDING_SOURCE,
+  DISCOUNT_OWNER,
   DISCOUNT_PLAN_STATUS,
+  DISCOUNT_SCOPE,
   DISCOUNT_SOURCE,
+  DISCOUNT_SUBJECT,
+  DISCOUNT_VIOLATION_REASON,
   type DiscountSource,
 } from './types'
 
@@ -96,4 +102,155 @@ export const ERROR_MESSAGES = {
   CUSTOMER_REQUIRED: 'Select a customer',
   MODEL_REQUIRED: 'Model name is required',
   MODEL_TOO_LONG: 'Model name is too long',
+  PLANS_LOAD_FAILED: 'Failed to load discount plans',
+  PLAN_LOAD_FAILED: 'Failed to load the discount plan',
+  PLAN_SAVE_FAILED: 'Failed to save the discount plan',
+  PLAN_DELETE_FAILED: 'Failed to delete the discount plan',
+  PLAN_STATUS_FAILED: 'Failed to change the plan status',
+  PLAN_VALIDATE_FAILED: 'Failed to run the pre-save check',
+  RULES_LOAD_FAILED: 'Failed to load the rules',
+  RULE_SAVE_FAILED: 'Failed to save the rule',
+  RULE_DELETE_FAILED: 'Failed to delete the rule',
+  BINDINGS_LOAD_FAILED: 'Failed to load the bindings',
+  BINDING_SAVE_FAILED: 'Failed to bind the customer',
+  BINDING_DELETE_FAILED: 'Failed to unbind the customer',
+} as const
+
+// ============================================================================
+// Owner / Billing / Binding / Violation labels
+// ============================================================================
+
+/** 方案归属 → i18n 键 */
+export const DISCOUNT_OWNER_LABEL_KEYS: Record<string, string> = {
+  [DISCOUNT_OWNER.PLATFORM]: 'Platform',
+  [DISCOUNT_OWNER.AGENT]: 'Agent',
+}
+
+/** 计费模式 → i18n 键 */
+export const DISCOUNT_BILLING_MODE_LABEL_KEYS: Record<string, string> = {
+  [DISCOUNT_BILLING_MODE.USAGE]: 'Per usage',
+  [DISCOUNT_BILLING_MODE.SUBSCRIPTION]: 'Subscription',
+  [DISCOUNT_BILLING_MODE.FREE]: 'Free',
+}
+
+/** 绑定来源 → i18n 键 */
+export const DISCOUNT_BINDING_SOURCE_LABEL_KEYS: Record<string, string> = {
+  [DISCOUNT_BINDING_SOURCE.MANUAL]: 'Manual',
+  [DISCOUNT_BINDING_SOURCE.SUBSCRIPTION]: 'Subscription',
+  [DISCOUNT_BINDING_SOURCE.CUSTOMER_CODE]: 'Customer code',
+  [DISCOUNT_BINDING_SOURCE.MIGRATION]: 'Migration',
+}
+
+/** 绑定主体 → i18n 键 */
+export const DISCOUNT_SUBJECT_LABEL_KEYS: Record<string, string> = {
+  [DISCOUNT_SUBJECT.USER]: 'User',
+  [DISCOUNT_SUBJECT.AGENT]: 'Agent',
+}
+
+/** 保存前检查的原因码 → i18n 键 */
+export const DISCOUNT_VIOLATION_REASON_LABEL_KEYS: Record<string, string> = {
+  [DISCOUNT_VIOLATION_REASON.BELOW_MIN_DISCOUNT]:
+    'Discount is below the plan minimum',
+  [DISCOUNT_VIOLATION_REASON.MIN_ABOVE_BASE]:
+    'Plan minimum is above its base discount',
+  [DISCOUNT_VIOLATION_REASON.COST_BREACH]: 'Cost exceeds the profit floor',
+  [DISCOUNT_VIOLATION_REASON.NO_CHANNEL]: 'No route can serve this rule',
+}
+
+/**
+ * 查不到文案就原样显示标识：宁可让运营看见一个没翻译的英文码，
+ * 也不能假装认识它、显示成别的意思。
+ */
+function lookupLabel(
+  t: TFunction,
+  labelKeys: Record<string, string>,
+  value: string
+): string {
+  const labelKey = labelKeys[value]
+  return labelKey ? t(labelKey) : value
+}
+
+export function getDiscountOwnerLabel(t: TFunction, ownerType: string): string {
+  return lookupLabel(t, DISCOUNT_OWNER_LABEL_KEYS, ownerType)
+}
+
+export function getDiscountBillingModeLabel(
+  t: TFunction,
+  billingMode: string
+): string {
+  return lookupLabel(t, DISCOUNT_BILLING_MODE_LABEL_KEYS, billingMode)
+}
+
+export function getDiscountBindingSourceLabel(
+  t: TFunction,
+  source: string
+): string {
+  return lookupLabel(t, DISCOUNT_BINDING_SOURCE_LABEL_KEYS, source)
+}
+
+export function getDiscountSubjectLabel(
+  t: TFunction,
+  subjectType: string
+): string {
+  return lookupLabel(t, DISCOUNT_SUBJECT_LABEL_KEYS, subjectType)
+}
+
+export function getDiscountViolationReasonLabel(
+  t: TFunction,
+  reason: string
+): string {
+  return lookupLabel(t, DISCOUNT_VIOLATION_REASON_LABEL_KEYS, reason)
+}
+
+// ============================================================================
+// Filter values (shared by the route search schema and the toolbar)
+// ============================================================================
+
+export const DISCOUNT_STATUS_FILTER_VALUES = ['0', '1'] as const
+export const DISCOUNT_OWNER_FILTER_VALUES = ['platform', 'agent'] as const
+
+/** 状态下拉项：筛选器与表单共用。 */
+export function getDiscountStatusOptions(t: TFunction) {
+  return [
+    { label: t('Enabled'), value: String(DISCOUNT_PLAN_STATUS.ENABLED) },
+    { label: t('Disabled'), value: String(DISCOUNT_PLAN_STATUS.DISABLED) },
+  ]
+}
+
+/** 归属下拉项：筛选器与表单共用。 */
+export function getDiscountOwnerOptions(t: TFunction) {
+  return [
+    { label: t('Platform'), value: DISCOUNT_OWNER.PLATFORM },
+    { label: t('Agent'), value: DISCOUNT_OWNER.AGENT },
+  ]
+}
+
+/** 计费模式下拉项。 */
+export function getDiscountBillingModeOptions(t: TFunction) {
+  return [
+    { label: t('Per usage'), value: DISCOUNT_BILLING_MODE.USAGE },
+    { label: t('Subscription'), value: DISCOUNT_BILLING_MODE.SUBSCRIPTION },
+    { label: t('Free'), value: DISCOUNT_BILLING_MODE.FREE },
+  ]
+}
+
+/** 规则范围下拉项。 */
+export function getDiscountScopeOptions(t: TFunction) {
+  return [
+    { label: t('Model'), value: DISCOUNT_SCOPE.MODEL },
+    { label: t('Vendor'), value: DISCOUNT_SCOPE.VENDOR },
+  ]
+}
+
+// ============================================================================
+// Limits
+// ============================================================================
+
+export const DISCOUNT_PLAN_LIMITS = {
+  /** 一个方案的规则一次全拉，规则数量本就有限。 */
+  RULE_PAGE_SIZE: 100,
+  /** 绑定列表每页条数。 */
+  BINDING_PAGE_SIZE: 50,
+  /** 绑定客户时给用户下拉取的条数。 */
+  CUSTOMER_PAGE_SIZE: 50,
 } as const

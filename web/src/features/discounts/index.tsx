@@ -21,16 +21,27 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { SectionPageLayout } from '@/components/layout'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 
+import { DiscountsDialogs } from './components/discounts-dialogs'
+import { DiscountsPrimaryButtons } from './components/discounts-primary-buttons'
+import { DiscountsProvider } from './components/discounts-provider'
 import { DiscountsSimulateDrawer } from './components/discounts-simulate-drawer'
+import { DiscountsTable } from './components/discounts-table'
 
 /**
- * 折扣页：目前只提供试算入口。
- * 方案列表与规则编辑是下一步的事，这里先不假装已经有了。
+ * 折扣页：管方案（折扣、规则、绑了谁），再给一个试算入口看实际会收多少钱。
+ * 试算是「看一眼」，方案管理是「真改」，两者放一起正好对照着用。
  */
 export function Discounts() {
+  return (
+    <DiscountsProvider>
+      <DiscountsPage />
+    </DiscountsProvider>
+  )
+}
+
+function DiscountsPage() {
   const { t } = useTranslation()
   const [simulateOpen, setSimulateOpen] = useState(false)
 
@@ -43,21 +54,14 @@ export function Discounts() {
             <Calculator className='h-4 w-4' />
             {t('Simulate')}
           </Button>
+          <DiscountsPrimaryButtons />
         </SectionPageLayout.Actions>
         <SectionPageLayout.Content>
-          <div className='flex h-full min-h-0 flex-col gap-4'>
-            <Alert>
-              <AlertTitle>{t('Discount Plans')}</AlertTitle>
-              <AlertDescription>
-                {t(
-                  'The plan list and rule editor are not here yet. Use Simulate to check what a customer would pay and what each upstream route costs.'
-                )}
-              </AlertDescription>
-            </Alert>
-          </div>
+          <DiscountsTable />
         </SectionPageLayout.Content>
       </SectionPageLayout>
 
+      <DiscountsDialogs />
       <DiscountsSimulateDrawer
         open={simulateOpen}
         onOpenChange={setSimulateOpen}
