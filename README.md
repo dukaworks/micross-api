@@ -1,3 +1,5 @@
+﻿> ⚠️ 本仓库已迁移至 https://github.com/microsslinks/micross-api，此仓库不再维护。
+
 <div align="center">
 
 ![new-api](/web/public/logo.png)
